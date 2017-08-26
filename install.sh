@@ -365,7 +365,7 @@ install_configure()
   rm -f /mnt/etc/localtime
   rm -f /mnt/etc/resolv.conf
   mkdir -p /mnt/etc/pacman.d/hooks
-  printf "[Trigger]\nOperation = Upgrade\nType = Package\nTarget = pacman-mirrorlist\n\n[Action]Description = Updating pacman-mirrorlist with reflector and removing pacnew...\n" > /mnt/etc/pacman.d/hooks/mirrorupgrade.hook
+  printf "[Trigger]\nOperation = Upgrade\nType = Package\nTarget = pacman-mirrorlist\n\n[Action]\nDescription = Updating pacman-mirrorlist with reflector and removing pacnew...\n" > /mnt/etc/pacman.d/hooks/mirrorupgrade.hook
   printf "When = PostTransaction\nDepends = reflector\n" >> /mnt/etc/pacman.d/hooks/mirrorupgrade.hook
   printf "Exec = /usr/bin/env sh -c \"reflector --country 'United States' --latest 200 --age 24 --sort rate --save /etc/pacman.d/mirrorlist; if [[ -f /etc/pacman.d/mirrorlist.pacnew ]]; then rm /etc/pacman.d/mirrorlist.pacnew; fi\"\n" >> /mnt/etc/pacman.d/hooks/mirrorupgrade.hook
   printf "[Unit]\nDescription=Pacman mirrorlist update\nRequires=network-online.target\nAfter=network-online.target\n\n" > /mnt/etc/systemd/system/reflector.service

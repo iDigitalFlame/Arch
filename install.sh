@@ -392,7 +392,7 @@ install_configure()
   	printf "Port 22\nAddressFamily any\nListenAddress 0.0.0.0\nListenAddress ::\nProtocol 2\nHostKey /etc/ssh/ssh_host_rsa_key\nHostKey /etc/ssh/ssh_host_ed25519_key\n" > /mnt/etc/ssh/sshd_config
     printf "PubkeyAuthentication yes\nPasswordAuthentication yes\nPermitEmptyPasswords no\nKerberosAuthentication no\nChallengeResponseAuthentication no\n" >> /mnt/etc/ssh/sshd_config
     printf "ServerKeyBits 4096\nPermitRootLogin yes\nCiphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr\n" >> /mnt/etc/ssh/sshd_config
-    printf "MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-ripemd160-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,hmac-ripemd160,umac-128@openssh.com\n" >> /mnt/etc/ssh/sshd_config
+    printf "MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com\n" >> /mnt/etc/ssh/sshd_config
     printf "KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256\nAuthorizedKeysFile .ssh/authorized_keys\nRhostsRSAAuthentication no\nHostbasedAuthentication no\n" >> /mnt/etc/ssh/sshd_config
     printf "IgnoreUserKnownHosts no\nIgnoreRhosts yes\nAllowAgentForwarding no\nAllowTcpForwarding no\nGatewayPorts no\nPermitTTY yes\nPrintMotd yes\nPrintLastLog yes\nTCPKeepAlive yes\n" >> /mnt/etc/ssh/sshd_config
     printf "LoginGraceTime 1m\nUsePrivilegeSeparation sandbox\nCompression no\nClientAliveInterval 3600\nClientAliveCountMax 0\nMaxStartups 10:30:100\nPermitTunnel no\nSubsystem sftp /usr/lib/ssh/sftp-server" >> /mnt/etc/ssh/sshd_config
@@ -400,7 +400,7 @@ install_configure()
     printf "\tHostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com,ssh-rsa-cert-v01@openssh.com,ssh-ed25519,ssh-rsa\n" >> /mnt/etc/ssh/ssh_config
     printf "\tKexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256\n" >> /mnt/etc/ssh/ssh_config
     printf "\tCiphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr\n" >> /mnt/etc/ssh/ssh_config
-    printf "\tMACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-ripemd160-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,hmac-ripemd160,umac-128@openssh.com\n" >> /mnt/etc/ssh/ssh_config
+    printf "\tMACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com\n" >> /mnt/etc/ssh/ssh_config
     printf "\tUseRoaming no\n\tForwardAgent no\n\tForwardX11 no\n\tGSSAPIAuthentication no\n\tGSSAPIDelegateCredentials no\n\tHostbasedAuthentication no\n" >> /mnt/etc/ssh/ssh_config
     printf "\tStrictHostKeyChecking ask\n\tCheckHostIP yes\n\tBatchMode no\n\tAddressFamily any\n\tPort 22\n\tProtocol 2\n\tTunnel no\n" >> /mnt/etc/ssh/ssh_config
     printf "\tConnectTimeout 30\n\tPermitLocalCommand no\n\tHashKnownHosts yes\n\tIdentityFile ~/.ssh/id_ed25519\n\tIdentityFile ~/.ssh/id_rsa\n\tVisualHostKey yes" >> /mnt/etc/ssh/ssh_config

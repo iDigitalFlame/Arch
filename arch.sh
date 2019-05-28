@@ -41,7 +41,7 @@ ask() {
     if [[ ! -z "$check" ]]; then
         _RESULT="$check"
         if [ $# -eq 2 ]; then
-        return 0
+            return 1
         fi
         return 0
     fi
@@ -800,12 +800,13 @@ setup_init
 setup_disk
 setup_files
 setup_config
+setup_chroot
+sync
 
 if ! [ -z "$SETUP_SCRIPT" ]; then
     source "$SETUP_SCRIPT"
 fi
 
-setup_chroot
 sync
 
 log "Done!"

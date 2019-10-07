@@ -235,6 +235,7 @@ setup_disk() {
         mkfs.ext4 -F -L root /dev/mapper/storage-root
         ;;
         *)
+        SETUP_FS="btrfs"
         mkfs.btrfs -f -L root /dev/mapper/storage-root
         ;;
     esac
@@ -264,9 +265,15 @@ setup_disk() {
 }
 
 setup_files() {
-    pkgs=( "base" "net-tools" "openssh" "reflector" "linux-hardened" "pacman-contrib" "git" )
+    pkgs=( "base" "net-tools" "openssh" "reflector" "linux-hardened" "pacman-contrib" "git" "which" "vi" "nano" "diffutils" "systemd-sysvcompat" "lvm2" "logrotate" "linux-firmware" "less" "device-mapper")
     if [[ "$SETUP_FS" == "btrfs" ]]; then
         pkgs+=("btrfs-progs")
+    fi
+    if [[ "$SETUP_FS" == "xfs" ]]; then
+        pkgs+=("xfsprogs")
+    fi
+    if [[ "$SETUP_FS" == "ext4" ]]; then
+        pkgs+=("e2fsprogs")
     fi
     if [ $SETUP_EFI -eq 1 ]; then
         pkgs+=("efibootmgr")

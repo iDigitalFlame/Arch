@@ -265,7 +265,7 @@ setup_disk() {
 }
 
 setup_files() {
-    pkgs=( "base" "net-tools" "openssh" "reflector" "linux-hardened" "pacman-contrib" "git" "which" "vi" "nano" "diffutils" "systemd-sysvcompat" "lvm2" "logrotate" "linux-firmware" "less" "device-mapper")
+    pkgs=( "base" "net-tools" "openssh" "reflector" "linux" "linux-hardened" "pacman-contrib" "git" "which" "vi" "nano" "diffutils" "systemd-sysvcompat" "lvm2" "logrotate" "linux-firmware" "less" "device-mapper")
     if [[ "$SETUP_FS" == "btrfs" ]]; then
         pkgs+=("btrfs-progs")
     fi

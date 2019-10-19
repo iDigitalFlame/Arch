@@ -626,7 +626,7 @@ setup_config() {
     printf '_bogus_error_responses  = 1\n' >> "${SETUP_DIRECTORY}/etc/sysctl.d/network.conf"
     printf '[Unit]\nDescription = Check Updates Status Service\nAfter       = network-online.t' >> "${SETUP_DIRECTORY}/etc/systemd/system/checkupdates.service"
     printf 'arget\nRequires    = network-online.target\n\n[Service]\nType        = simple\nExecSt' >> "${SETUP_DIRECTORY}/etc/systemd/system/checkupdates.service"
-    printf 'art   = /usr/bin/bash -c "checkupdates > /var/run/updates.list"\n\n[Install]\nWante' >> "${SETUP_DIRECTORY}/etc/systemd/system/checkupdates.service"
+    printf 'art   = -/usr/bin/bash -c "checkupdates > /var/run/updates.list"\n\n[Install]\nWante' >> "${SETUP_DIRECTORY}/etc/systemd/system/checkupdates.service"
     printf 'dBy    = multi-user.target\n' >> "${SETUP_DIRECTORY}/etc/systemd/system/checkupdates.service"
     printf '[Unit]\nDescription = Check Updates Status Timer\n\n[Timer]\nOnCalendar  = daily\nAcc' >> "${SETUP_DIRECTORY}/etc/systemd/system/checkupdates.timer"
     printf 'uracySec = 15m\n\n[Install]\nWantedBy    = timers.target\n' >> "${SETUP_DIRECTORY}/etc/systemd/system/checkupdates.timer"

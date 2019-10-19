@@ -244,7 +244,7 @@ setup_disk() {
     fi
     log "Mounting LVM Partitions.."
     if [[ $SETUP_FS == "btrfs" ]]; then
-        mount -t btrfs -o compress=lzo /dev/mapper/storage-root /mnt
+        mount -t btrfs -o compress=std /dev/mapper/storage-root /mnt
         if [ $? -ne 0 ]; then
             bail "mount returned a non-zero error code!"
         fi

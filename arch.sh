@@ -650,7 +650,7 @@ setup_config() {
     printf '[options]\nDBPath              = /var/lib/pacman/\nGPGDir              = /etc/pacm' >> "${SETUP_DIRECTORY}/etc/pacman.conf"
     printf 'an.d/gnupg/\nRootDir             = /\nHookDir             = /etc/pacman.d/hooks/\nL' >> "${SETUP_DIRECTORY}/etc/pacman.conf"
     printf 'ogFile             = /var/log/pacman.log\nHoldPkg             = pacman glibc\nCach' >> "${SETUP_DIRECTORY}/etc/pacman.conf"
-    printf 'eDir            = /var/cache/pacman/pkg/\nUseDelta            = 0.7\nSigLevel     ' >> "${SETUP_DIRECTORY}/etc/pacman.conf"
+    printf 'eDir            = /var/cache/pacman/pkg/\nSigLevel     ' >> "${SETUP_DIRECTORY}/etc/pacman.conf"
     printf '       = Required DatabaseOptional\nCleanMethod         = KeepInstalled\nArchitect' >> "${SETUP_DIRECTORY}/etc/pacman.conf"
     printf 'ure        = auto\nLocalFileSigLevel   = Optional\n\nCheckSpace\nTotalDownload\nVerbo' >> "${SETUP_DIRECTORY}/etc/pacman.conf"
     printf 'sePkgLists\n\n[core]\nInclude             = /etc/pacman.d/mirrorlist\n[extra]\nInclud' >> "${SETUP_DIRECTORY}/etc/pacman.conf"

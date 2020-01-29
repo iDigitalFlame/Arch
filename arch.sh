@@ -1,4 +1,21 @@
 #!/usr/bin/bash
+# ArchLinux Install Helper Script
+#
+# Copyright (C) 2020 iDigitalFlame
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
 
 SETUP_EFI=1
 SETUP_NET=()
@@ -265,7 +282,7 @@ setup_disk() {
 }
 
 setup_files() {
-    pkgs=( "base" "net-tools" "openssh" "reflector" "linux" "linux-hardened" "pacman-contrib" "git" "which" "vi" "nano" "diffutils" "systemd-sysvcompat" "lvm2" "logrotate" "linux-firmware" "less" "device-mapper")
+    pkgs=( "base" "net-tools" "openssh" "reflector" "linux" "linux-hardened" "man-db" "pacman-contrib" "git" "which" "vi" "nano" "diffutils" "systemd-sysvcompat" "lvm2" "logrotate" "linux-firmware" "less" "device-mapper")
     if [[ "$SETUP_FS" == "btrfs" ]]; then
         pkgs+=("btrfs-progs")
     fi
@@ -412,8 +429,8 @@ setup_config() {
     printf 'it 0\n' >> "${SETUP_DIRECTORY}/bin/syslink"
     printf '#!/usr/bin/bash\n# Attempts to pull the latest configuration information from a G' >> "${SETUP_DIRECTORY}/bin/syspull"
     printf 'it repo.\n# iDigitalFlame\n\nsource "/etc/sysconfig.conf" 2> /dev/null\nif [ $? -ne ' >> "${SETUP_DIRECTORY}/bin/syspull"
-    printf '0 ]; then\n    printf '\''Could not locate or source "/etc/sysconfig.conf"!\\n'\''\n    e' >> "${SETUP_DIRECTORY}/bin/syspull"
-    printf 'xit 1\nfi\nif [ -z "$SYSCONFIG" ]; then\n    printf '\''Could not find System Configur' >> "${SETUP_DIRECTORY}/bin/syspull"
+    printf '0 ]; then\n    printf \\"Could not locate or source \\"/etc/sysconfig.conf"!\\n\\"\n    e' >> "${SETUP_DIRECTORY}/bin/syspull"
+    printf 'xit 1\nfi\nif [ -z "$SYSCONFIG" ]; then\n    printf \\"Could not find System Configur' >> "${SETUP_DIRECTORY}/bin/syspull"
     printf 'ation directory!\\n'\''\n    exit 1\nfi\nif ! [ -d "$SYSCONFIG" ]; then\n    printf "Sys' >> "${SETUP_DIRECTORY}/bin/syspull"
     printf 'tem Configuration directory \\"$SYSCONFIG\\" does not exist!\\n"\n    exit 1\nfi\nSYSC' >> "${SETUP_DIRECTORY}/bin/syspull"
     printf 'ONFIG=${SYSCONFIG%%/}\nif ! [ -d "${SYSCONFIG}/.git" ]; then\n    printf "System Co' >> "${SETUP_DIRECTORY}/bin/syspull"
@@ -422,9 +439,9 @@ setup_config() {
     printf ' ${SYSCONFIG}; git pull"\nsyslink\nexit 0\n' >> "${SETUP_DIRECTORY}/bin/syspull"
     printf '#!/usr/bin/bash\n# Attempts to push the latest configuration information to a Git' >> "${SETUP_DIRECTORY}/bin/syspush"
     printf ' repo.\n# iDigitalFlame\n\nsource "/etc/sysconfig.conf" 2> /dev/null\nif [ $? -ne 0 ' >> "${SETUP_DIRECTORY}/bin/syspush"
-    printf ']; then\n    printf '\''Could not locate or source "/etc/sysconfig.conf"!\\n'\''\n    exi' >> "${SETUP_DIRECTORY}/bin/syspush"
-    printf 't 1\nfi\nif [ -z "$SYSCONFIG" ]; then\n    printf '\''Could not find System Configurat' >> "${SETUP_DIRECTORY}/bin/syspush"
-    printf 'ion directory!\\n'\''\n    exit 1\nfi\nif ! [ -d "$SYSCONFIG" ]; then\n    printf "Syste' >> "${SETUP_DIRECTORY}/bin/syspush"
+    printf ']; then\n    printf \\"Could not locate or source \\"/etc/sysconfig.conf\\"!\\n\\"\n    exi' >> "${SETUP_DIRECTORY}/bin/syspush"
+    printf 't 1\nfi\nif [ -z "$SYSCONFIG" ]; then\n    printf \\"Could not find System Configurat' >> "${SETUP_DIRECTORY}/bin/syspush"
+    printf 'ion directory!\\n\\"\n    exit 1\nfi\nif ! [ -d "$SYSCONFIG" ]; then\n    printf "Syste' >> "${SETUP_DIRECTORY}/bin/syspush"
     printf 'm Configuration directory \\"$SYSCONFIG\\" does not exist!\\n"\n    exit 1\nfi\nSYSCON' >> "${SETUP_DIRECTORY}/bin/syspush"
     printf 'FIG=${SYSCONFIG%%/}\nif ! [ -d "${SYSCONFIG}/.git" ]; then\n    printf "System Conf' >> "${SETUP_DIRECTORY}/bin/syspush"
     printf 'iguration directory \\"$SYSCONFIG\\" is not a Git repo!\\n"\n    exit 1\nfi\n\nif [ $UI' >> "${SETUP_DIRECTORY}/bin/syspush"
@@ -781,7 +798,7 @@ setup_chroot() {
         log "Configuring EFI boot.."
         bdisk=""
         bopts=""
-        for disk in $(ls -al /dev/disk/by-uuid/ | awk '{print $9}' | grep '-'); do
+        for disk in $(ls -al /dev/disk/by-uuid/ | awk '{print $9}' | grep "-"); do
             dmount=$(cat /mnt/etc/fstab | grep "UUID=$disk" | grep "/" | awk '{print $2}')
             if [[ "$dmount" == "/" && ${#dmount} -eq 1 ]]; then
                 bdisk="$disk"

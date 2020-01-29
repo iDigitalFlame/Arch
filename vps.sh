@@ -1,17 +1,18 @@
 #!/bin/sh
-
 # Copyright 2015, Timothy Redaelli <tredaelli@archlinux.info>
-
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
+#
+# Retrived from: https://github.com/drizzt/vps2arch
 
 set -e
 
@@ -251,15 +252,15 @@ finalize() {
 
 	# Enable SSH login for user root (#3)
 	sed -i '/^#PermitRootLogin\s/s/.*/&\nPermitRootLogin yes/' /etc/ssh/sshd_config
-	
+
 	# Run reflector to get updated mirrors
-	
+
 	cat <<-EOF
-	
+
 		Reflector: Rating the 35 most recently synced HTTPS servers, sorting them by download speed
-		
+
 	EOF
-	
+
 	reflector -l 35 -p https --sort rate --save /etc/pacman.d/mirrorlist
 
 	cat <<-EOF

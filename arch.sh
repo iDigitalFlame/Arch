@@ -18,6 +18,7 @@
 #
 
 SETUP_EFI=1
+SETUP_LVM=0
 SETUP_NET=()
 SETUP_AUTO=0
 SETUP_SSHKEY=""
@@ -227,33 +228,39 @@ setup_disk() {
             bail "mkfs.fat returned a non-zero error code!"
         fi
     fi
-    log "Creating LVM partitions on \"${SETUP_DRIVE}2\".."
-    pvcreate --force --yes "${SETUP_DRIVE}2"
-    if [ $? -ne 0 ]; then
-        bail "pvcreate returned a non-zero error code!"
+    drive=$SETUP_DRIVE
+    if [ $SETUP_LVM -eq 1 ];then
+        log "Creating LVM partitions on \"${SETUP_DRIVE}2\".."
+        pvcreate --force --yes "${SETUP_DRIVE}2"
+        if [ $? -ne 0 ]; then
+            bail "pvcreate returned a non-zero error code!"
+        fi
+        vgcreate --force --yes storage "${SETUP_DRIVE}2"
+        if [ $? -ne 0 ]; then
+            bail "vgcreate returned a non-zero error code!"
+        fi
+        lvcreate --yes -n root storage -l 100%FREE
+        if [ $? -ne 0 ]; then
+            bail "lvcreate returned a non-zero error code!"
+        fi
+        log "Formatting LVM partitions on \"${SETUP_DRIVE}2\".."
+        drive="/dev/mapper/storage-root"
+    else
+        log "Formatting  partitions on \"${SETUP_DRIVE}2\".."
     fi
-    vgcreate --force --yes storage "${SETUP_DRIVE}2"
-    if [ $? -ne 0 ]; then
-        bail "vgcreate returned a non-zero error code!"
-    fi
-    lvcreate --yes -n root storage -l 100%FREE
-    if [ $? -ne 0 ]; then
-        bail "lvcreate returned a non-zero error code!"
-    fi
-    log "Formatting LVM partitions on \"${SETUP_DRIVE}2\".."
     case $SETUP_FS in
         "xfs")
-        mkfs.xfs -f -L root /dev/mapper/storage-root
+        mkfs.xfs -f -L root "${drive}"
         ;;
         "btrfs")
-        mkfs.btrfs -f -L root /dev/mapper/storage-root
+        mkfs.btrfs -f -L root "${drive}"
         ;;
         "ext4")
-        mkfs.ext4 -F -L root /dev/mapper/storage-root
+        mkfs.ext4 -F -L root "${drive}"
         ;;
         *)
         SETUP_FS="btrfs"
-        mkfs.btrfs -f -L root /dev/mapper/storage-root
+        mkfs.btrfs -f -L root "${drive}"
         ;;
     esac
     if [ $? -ne 0 ]; then
@@ -261,12 +268,12 @@ setup_disk() {
     fi
     log "Mounting LVM Partitions.."
     if [[ $SETUP_FS == "btrfs" ]]; then
-        mount -t btrfs -o compress=zstd /dev/mapper/storage-root /mnt
+        mount -t btrfs -o compress=zstd "${drive}" /mnt
         if [ $? -ne 0 ]; then
             bail "mount returned a non-zero error code!"
         fi
     else
-        mount /dev/mapper/storage-root /mnt
+        mount "${drive}" /mnt
         if [ $? -ne 0 ]; then
             bail "mount returned a non-zero error code!"
         fi
@@ -282,7 +289,10 @@ setup_disk() {
 }
 
 setup_files() {
-    pkgs=( "base" "net-tools" "openssh" "reflector" "linux" "linux-hardened" "man-db" "pacman-contrib" "git" "which" "vi" "nano" "diffutils" "systemd-sysvcompat" "lvm2" "logrotate" "linux-firmware" "less" "device-mapper")
+    pkgs=( "base" "net-tools" "openssh" "reflector" "linux" "linux-hardened" "man-db" "pacman-contrib" "git" "which" "vi" "nano" "diffutils" "systemd-sysvcompat" "logrotate" "linux-firmware" "less" "device-mapper")
+    if [ $SETUP_LVM -eq 1 ]; then
+        pkgs+=("lvm2")
+    fi
     if [[ "$SETUP_FS" == "btrfs" ]]; then
         pkgs+=("btrfs-progs")
     fi
@@ -358,13 +368,27 @@ setup_config() {
     touch "${SETUP_DIRECTORY}/etc/vconsole.conf"
     touch "${SETUP_DIRECTORY}/etc/syscheck.d/empty.sh"
     if [ $SETUP_EFI -eq 0 ]; then
-        sed -i -e 's/part_gpt part_msdos/part_gpt lvm part_msdos/g' "/mnt/etc/default/grub"
+        if [ $SETUP_LVM -eq 1 ]; then
+            sed -i -e 's/part_gpt part_msdos/part_gpt lvm part_msdos/g' "/mnt/etc/default/grub"
+        fi
+    fi
+    lvmm=""
+    if [ $SETUP_LVM -eq 1 ]; then
+        lvmm=" lvm2"
     fi
     printf 'FILES=()\nCOMPRESSION="gzip"\nMODULES=()\nBINARIES=(' > "${SETUP_DIRECTORY}/etc/mkinitcpio.conf"
     if [[ "$SETUP_FS" == "btrfs" ]]; then
-        printf '"/usr/bin/btrfs")\nHOOKS=(systemd autodetect modconf keymap block keyboard sd-vconsole sd-lvm2 btrfs filesystems fsck)\n' >> "${SETUP_DIRECTORY}/etc/mkinitcpio.conf"
+        printf '"/usr/bin/btrfs")\nHOOKS=(systemd autodetect modconf keymap block keyboard sd-vconsole' >> "${SETUP_DIRECTORY}/etc/mkinitcpio.conf"
+        if [ $SETUP_LVM -eq 1 ]; then
+            printf " lvm2" >> "${SETUP_DIRECTORY}/etc/mkinitcpio.conf"
+        fi
+        printf ' btrfs filesystems fsck)\n' >> "${SETUP_DIRECTORY}/etc/mkinitcpio.conf"
     else
-        printf ')\nHOOKS=(systemd autodetect modconf keymap block keyboard sd-vconsole sd-lvm2 filesystems fsck)\n' >> "${SETUP_DIRECTORY}/etc/mkinitcpio.conf"
+        printf ')\nHOOKS=(systemd autodetect modconf keymap block keyboard sd-vconsole' >> "${SETUP_DIRECTORY}/etc/mkinitcpio.conf"
+        if [ $SETUP_LVM -eq 1 ]; then
+            printf " lvm2" >> "${SETUP_DIRECTORY}/etc/mkinitcpio.conf"
+        fi
+        printf ' filesystems fsck)\n' >> "${SETUP_DIRECTORY}/etc/mkinitcpio.conf"
     fi
     printf "$SETUP_HOSTNAME\n" > "${SETUP_DIRECTORY}/etc/motd"
     printf "$SETUP_HOSTNAME" > "${SETUP_DIRECTORY}/etc/hostname"

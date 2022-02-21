@@ -761,7 +761,7 @@ setup_chroot() {
     mount --bind /run/lvm /mnt/tmplvm
     printf '#!/bin/bash\n\n' > /mnt/root/start.sh
     printf 'ln -s /tmplvm /run/lvm\n' >> /mnt/root/start.sh
-    printf 'vgscan -v\n' >> /mnt/root/start.sh
+    printf 'vgscan -v 2> /dev/null\n' >> /mnt/root/start.sh
     printf "bash ${SETUP_CONFIGURATION}/bin/relink ${SETUP_CONFIGURATION} /\n" >> /mnt/root/start.sh
     printf "bash ${SETUP_CONFIGURATION}/bin/syslink\n" >> /mnt/root/start.sh
     printf 'locale-gen\n' >> /mnt/root/start.sh

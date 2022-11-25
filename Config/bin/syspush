@@ -1,0 +1,25 @@
+#!/usr/bin/bash
+
+source "/etc/sysconfig.conf" 2> /dev/null
+if [ -z "$SYSCONFIG" ]; then
+    echo "Could not find the System Configuration directory!"
+    exit 1
+fi
+if ! [ -d "$SYSCONFIG" ]; then
+    echo "System Configuration directory \"$SYSCONFIG\" does not exist!"
+    exit 1
+fi
+
+SYSCONFIG=${SYSCONFIG%/}
+if ! [ -d "${SYSCONFIG}/.git" ]; then
+    echo "System Configuration directory \"$SYSCONFIG\" is not a Git repository!"
+    exit 1
+fi
+
+if [ $UID -ne 0 ]; then
+    echo "Only root can do this!"
+    exit 1
+fi
+
+sh -c "cd ${SYSCONFIG}; git add -A .; git commit -m 'syspush'; git push"
+syslink

@@ -1,0 +1,11 @@
+[Trigger]
+Type        = Package
+Target      = *
+Operation   = Remove
+Operation   = Upgrade
+Operation   = Install
+
+[Action]
+When        = PostTransaction
+Exec        = /usr/bin/syslink
+Description = Fixing permissions for system files..

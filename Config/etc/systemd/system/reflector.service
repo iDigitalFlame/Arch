@@ -1,0 +1,29 @@
+[Unit]
+After                   = network-online.target systemd-resolved.service
+Requires                = network-online.target systemd-resolved.service
+Description             = Pacman Mirrorlist Update Service
+
+[Service]
+Type                    = simple
+ExecStart               = /usr/bin/reflector --protocol https --latest 30 --number 20 --sort rate --country 'United States' --save /etc/pacman.d/mirrorlist
+PrivateTmp              = true
+KeyringMode             = private
+ProtectHome             = false
+ProtectClock            = true
+PrivateUsers            = true
+ProtectSystem           = strict
+ReadWritePaths          = /etc/pacman.d /root/.cache
+PrivateDevices          = true
+NoNewPrivileges         = true
+LockPersonality         = true
+RestrictRealtime        = true
+RestrictSUIDSGID        = true
+ProtectKernelLogs       = true
+RestrictNamespaces      = true
+ProtectControlGroups    = true
+ProtectKernelModules    = true
+ProtectKernelTunables   = true
+RestrictAddressFamilies = AF_INET AF_INET6
+
+[Install]
+RequiredBy              = multi-user.target

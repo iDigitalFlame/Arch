@@ -1,0 +1,9 @@
+[Trigger]
+Type        = Package
+Target      = iptables
+Operation   = Upgrade
+
+[Action]
+When        = PostTransaction
+Exec        = /usr/bin/rm /etc/iptables/simple_firewall.rules /etc/iptables/empty.rules
+Description = Removing simple rules files..

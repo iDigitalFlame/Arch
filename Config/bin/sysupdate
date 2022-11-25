@@ -1,0 +1,29 @@
+#!/usr/bin/bash
+
+if [ $UID -ne 0 ]; then
+    echo "Only root can do this!"
+    exit 1
+fi
+
+source "/etc/sysconfig.conf" 2> /dev/null
+if [ -z "$SYSCONFIG" ]; then
+    echo "Could not find the System Configuration directory!"
+    exit 1
+fi
+if ! [ -d "$SYSCONFIG" ]; then
+    echo "System Configuration directory \"$SYSCONFIG\" does not exist!"
+    exit 1
+fi
+
+if [ "$1" == "--auto" ]; then
+    if [ "$2" == "--download" ]; then
+        pacman -Syuw --noconfirm
+        exit 0
+    fi
+    pacman -Syu --noconfirm
+else
+    pacman -Syu
+fi
+
+syslink
+sh -c "cd ${SYSCONFIG}; git status -s"

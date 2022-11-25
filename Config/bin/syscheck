@@ -1,0 +1,32 @@
+#!/usr/bin/bash
+
+pause() {
+    printf "Press ENTER to continue.."
+    read -s
+    printf "\n"
+}
+
+if [ $UID -ne 0 ]; then
+    echo "Only root can do this!"
+    exit 1
+fi
+
+uname -a
+pause
+systemctl --failed
+pause
+ifconfig
+pause
+netstat -panut
+pause
+ps xfua
+pause
+df -h
+pause
+mount
+pause
+pacman -Syy 1> /dev/null
+echo "Orphaned Packages Found:"
+pacman -Qtdq
+echo "Done!"
+exit 0

@@ -1,0 +1,10 @@
+[Trigger]
+Type        = Package
+Target      = pacman-mirrorlist
+Operation   = Upgrade
+
+[Action]
+When        = PostTransaction
+Exec        = /usr/bin/bash -c "reflector --protocol https --latest 30 --number 20 --sort rate --country 'United States' --save /etc/pacman.d/mirrorlist; rm -f /etc/pacman.d/mirrorlist.pacnew 2> /dev/null"
+Depends     = reflector
+Description = Updating pacman-mirrorlist with reflector and removing pacnew..

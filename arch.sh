@@ -123,8 +123,9 @@ setup_init() {
             bail "No internet connection! How did you get this script?"
         fi
     fi
-    pacman -Syy
-    pacman -S archlinux-keyring --noconfirm
+    log "Cheking current system keyring\.."
+    pacman -Syy 1> /dev/null
+    pacman -S archlinux-keyring --noconfirm 1> /dev/null
     if [ $SETUP_AUTO -eq 1 ]; then
         return 0
     fi
@@ -209,6 +210,8 @@ setup_disk() {
         done
         partprobe 1> /dev/null 2> /dev/null
     fi
+    log "Wiping disk \"${SETUP_DRIVE}\"."
+    printf "w\n" | fdisk --wipe always "${SETUP_DRIVE}"
     if [ $SETUP_EFI -eq 1 ]; then
         log "Setting up EFI disk \"${SETUP_DRIVE}\".."
         printf "g\nn\n\n\n+200M\nt\n1\nn\n\n\n\nw" | fdisk $SETUP_DRIVE
@@ -234,12 +237,12 @@ setup_disk() {
     fi
     drive="${SETUP_DRIVE}2"
     if [ $SETUP_LVM -eq 1 ];then
-        log "Creating LVM partitions on \"${SETUP_DRIVE}\".."
-        pvcreate --force --yes "${SETUP_DRIVE}" 1> /dev/null
+        log "Creating LVM partitions on \"${drive}\".."
+        pvcreate --force --yes "${drive}" 1> /dev/null
         if [ $? -ne 0 ]; then
             bail "pvcreate returned a non-zero error code!"
         fi
-        vgcreate --force --yes storage "${SETUP_DRIVE}" 1> /dev/null
+        vgcreate --force --yes storage "${drive}" 1> /dev/null
         if [ $? -ne 0 ]; then
             bail "vgcreate returned a non-zero error code!"
         fi
@@ -247,10 +250,10 @@ setup_disk() {
         if [ $? -ne 0 ]; then
             bail "lvcreate returned a non-zero error code!"
         fi
-        log "Formatting LVM partitions on \"${SETUP_DRIVE}\".."
+        log "Formatting LVM partitions on \"${drive}\".."
         drive="/dev/mapper/storage-root"
     else
-        log "Formatting  partitions on \"${SETUP_DRIVE}\".."
+        log "Formatting partitions on \"${drive}\".."
     fi
     case $SETUP_FS in
         "xfs")
@@ -393,7 +396,7 @@ setup_config() {
     if [[ "${SETUP_FS}" == "btrfs" ]]; then
         printf " btrfs" >> "${SETUP_DIRECTORY}/etc/mkinitcpio.conf"
     fi
-    printf 'filesystems fsck)\n' >> "${SETUP_DIRECTORY}/etc/mkinitcpio.conf"
+    printf ' filesystems fsck)\n' >> "${SETUP_DIRECTORY}/etc/mkinitcpio.conf"
     printf "$SETUP_HOSTNAME\n" > "${SETUP_DIRECTORY}/etc/motd"
     printf "$SETUP_HOSTNAME" > "${SETUP_DIRECTORY}/etc/hostname"
 

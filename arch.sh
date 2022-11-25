@@ -123,7 +123,7 @@ setup_init() {
             bail "No internet connection! How did you get this script?"
         fi
     fi
-    log "Cheking current system keyring\.."
+    log "Cheking current system keyring.."
     pacman -Syy 1> /dev/null
     pacman -S archlinux-keyring --noconfirm 1> /dev/null
     if [ $SETUP_AUTO -eq 1 ]; then

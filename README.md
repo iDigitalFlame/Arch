@@ -1,14 +1,16 @@
-# arch-installer
+# Arch Installer
 
 ArchLinux Install Script
 
-wget and go.
+~~wget~~ curl and go. *wget was removed from the archiso.*
 
-Use "wget https://dij.sh/arch; bash arch" to install
+Use `curl -L <https://dij.sh/arch> -o arch; bash arch` to install.
 
 or
 
-Use "curl https://dij.sh/arch -o arch; bash arch" to install
+Use `wget <https://dij.sh/arch>; bash arch` to install.
 
+The default credentials are `root:archlinux` *(These work over SSH also)*
+**ITS HIGHLY RECOMMENDED YOU CHANGE THESE**
 
-The "vps.sh" script is a copy of the "VPS2Arch" script written by "https://github.com/drizzt"
+The "vps.sh" script is a copy of the "VPS2Arch" script written by [@drizzt](https://github.com/drizzt)

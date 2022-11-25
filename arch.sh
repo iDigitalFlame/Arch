@@ -96,7 +96,7 @@ setup_nic() {
         return 0
     fi
     address=$(ip addr show dev ${name} | grep inet | grep brd | awk '{print $2}')
-    gateway=$(route -n | grep ${name} | grep 0.0.0.0 | grep "UG" | awk '{print $2}')
+    gateway=$(ip route | grep 'default' | awk '{print $3}'| head -1)
     if ask "(${iname}) IPv4 Address [${address}]"; then
         address="${_RESULT}"
     fi

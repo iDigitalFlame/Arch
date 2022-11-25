@@ -377,7 +377,6 @@ setup_config() {
         chmod 444 "${SETUP_DIRECTORY}/etc/systemd/network/${name}.network"
     done
     touch "${SETUP_DIRECTORY}/etc/vconsole.conf"
-    touch "${SETUP_DIRECTORY}/etc/syscheck.d/empty.sh"
     if [ $SETUP_EFI -eq 0 ]; then
         if [ $SETUP_LVM -eq 1 ]; then
             sed -i -e 's/part_gpt part_msdos/part_gpt lvm part_msdos/g' "/mnt/etc/default/grub"
@@ -952,7 +951,6 @@ setup_config() {
     chmod 400 "${SETUP_DIRECTORY}/etc/ssh/sshd_config"
     chmod 400 "${SETUP_DIRECTORY}/etc/mkinitcpio.conf"
     chmod 555 "${SETUP_DIRECTORY}/etc/profile.d/umask.sh"
-    chmod 500 "${SETUP_DIRECTORY}/etc/syscheck.d/empty.sh"
     chmod 400 "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
     chmod 400 "${SETUP_DIRECTORY}/etc/systemd/coredump.conf"
     chmod 444 "${SETUP_DIRECTORY}/etc/systemd/resolved.conf"

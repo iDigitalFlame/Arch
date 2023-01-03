@@ -6,17 +6,17 @@ if [ -z "$SYSCONFIG" ]; then
     exit 1
 fi
 if ! [ -d "$SYSCONFIG" ]; then
-    echo "System Configuration directory \"$SYSCONFIG\" does not exist!"
+    printf "System Configuration directory \"%s\" does not exist!\n" "$SYSCONFIG"
     exit 1
 fi
 
 SYSCONFIG=${SYSCONFIG%/}
 if ! [ -d "${SYSCONFIG}/.git" ]; then
-    echo "System Configuration directory \"$SYSCONFIG\" is not a Git repository!"
+    printf "System Configuration directory \"%s\" is not a Git repository!\n" "$SYSCONFIG"
     exit 1
 fi
 
-if [ $UID -ne 0 ]; then
+if ! [ "$UID" = "0" ]; then
     echo "Only root can do this!"
     exit 1
 fi

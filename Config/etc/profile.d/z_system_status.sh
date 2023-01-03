@@ -1,8 +1,7 @@
 #!/usr/bin/bash
 
 status_repo() {
-    source "/etc/sysconfig.conf" 2> /dev/null
-    if [ $? -ne 0 ]; then
+    if ! source "/etc/sysconfig.conf" 2> /dev/null; then
         return 0
     fi
     if [ -z "$SYSCONFIG" ]; then
@@ -15,38 +14,36 @@ status_repo() {
     if ! [ -d "${SYSCONFIG}/.git" ]; then
         return 0
     fi
-    if ! [[ -z $(bash -c "cd ${SYSCONFIG}; git status | grep -iE 'modified|deleted|Untracked'") ]]; then
+    if bash -c "cd ${SYSCONFIG}; git status | grep -qiE 'modified|deleted|Untracked'"; then
         printf '# Config:\tSync needed, use "syspush"\n'
     else
         printf "# Config:\tUp-to-Date\n"
     fi
 }
 status_storage() {
-    printf "# Storage:\n"
+    echo "# Storage:"
     df -h | grep -v "tmpfs" | grep -E '/dev/|/opt/|/mnt/' | sort -r | awk '{print ""$1" "$5" ("$3"/"$2")"}' | column -t | awk '{print "#     "$0}'
 }
 status_network() {
-    printf "# Interface Addresses:\n"
-    for i in $(ip addr |grep 'inet' | grep -vE '::1|127.0.0.1|link' | awk '{print $2}' | awk -F'/' '{print $1}'); do
-        printf "#     $i\n"
+    echo "# Interface Addresses:"
+    for i in $(ip addr | grep "inet" | grep -vE "::1|127.0.0.1|link" | awk '{print $2}' | awk -F'/' '{print $1}'); do
+        printf "#     %s\n" "$i"
     done
 }
 status_services() {
-    nl=$(netstat -panut 2>/dev/null | grep LISTEN | wc -l)
-    ne=$(netstat -panut 2>/dev/null | grep ESTABLISHED | wc -l)
-    printf "# Network:\t$ne Established, $nl Listening\n"
-    st=$(systemctl --all --no-legend --no-pager | grep ".timer" | wc -l)
-    sf=$(systemctl --state=failed --no-legend --no-pager | grep ".service" | wc -l)
-    sa=$(systemctl --state=active --no-legend --no-pager | grep ".service" | grep "running" | wc -l)
-    printf "# Services:\t$sa Running, $sf Failed, $st Timers\n"
+    printf "# Network:\t%s Established, " "$(netstat -panut 2> /dev/null | grep -c "ESTABLISHED")"
+    printf "%s Listening\n" "$(netstat -panut 2> /dev/null | grep -c "LISTEN")"
+    printf "# Services:\t%s Running, " "$(systemctl --state=active --no-legend --no-pager | grep ".service" | grep -c "running")"
+    printf "%s Failed, " "$(systemctl --state=failed --no-legend --no-pager | grep -c ".service")"
+    printf "%s Timers\n" "$(systemctl --all --no-legend --no-pager | grep -c ".timer")"
 }
 
-if [[ $- != *i* ]] || [ ! -z "$SSH_CLIENT" ]; then
+if [[ $- != *i* ]] || [ -n "$SSH_CLIENT" ]; then
     printf "##############################################################\n"
     status_storage
     status_network
-    printf "# Uptime:\t$(uptime --pretty | sed 's/up //g')\n"
-    printf "# Kernel:\t$(uname -r)\n"
+    printf "# Uptime:\t%s\n" "$(uptime --pretty | sed 's/up //g')"
+    printf "# Kernel:\t%s\n" "$(uname -r)"
     status_repo
     status_services
     printf "##############################################################\n"

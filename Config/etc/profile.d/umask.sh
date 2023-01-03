@@ -1,3 +1,3 @@
 #!/usr/bin/bash
 
-umask 027
+umask 0027

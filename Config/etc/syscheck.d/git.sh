@@ -6,11 +6,11 @@ if [ -z "$SYSCONFIG" ]; then
     exit 1
 fi
 if ! [ -d "$SYSCONFIG" ]; then
-    echo "System Configuration directory \"$SYSCONFIG\" does not exist!"
+    printf "System Configuration directory \"%s\" does not exist!\n" "$SYSCONFIG"
     exit 1
 fi
 
 if [ -d "${SYSCONFIG}/.git" ]; then
-    chmod 750 $SYSCONFIG/.git/hooks/*
+    chmod 0750 "$SYSCONFIG"/.git/hooks/*
     bash -c "cd ${SYSCONFIG}; git status" 2> /dev/null 1> /dev/null
 fi

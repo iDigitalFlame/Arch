@@ -6,13 +6,13 @@ if [ -z "$SYSCONFIG" ]; then
     exit 1
 fi
 if ! [ -d "$SYSCONFIG" ]; then
-    echo "System Configuration directory \"$SYSCONFIG\" does not exist!"
+    printf "System Configuration directory \"%s\" does not exist!\n" "$SYSCONFIG"
     exit 1
 fi
 
 SYSCONFIG=${SYSCONFIG%/}
 
-if [ $UID -ne 0 ]; then
+if ! [ "$UID" = "0" ]; then
     echo "Only root can do this!"
     exit 1
 fi
@@ -21,65 +21,64 @@ relink "$SYSCONFIG" /
 
 pacman -Qeq 1> "${SYSCONFIG}/packages.md"
 cp "/etc/fstab" "${SYSCONFIG}/etc/fstab.nlk"
-systemctl list-unit-files | grep 'masked'| awk '{print $1}' 1> "${SYSCONFIG}/masked.md"
-systemctl list-units | grep '@.' | grep -vE 'dead|exited'| awk '{print $1}' | grep -vE 'getty|user|blockdev' | grep '@.' 1> "${SYSCONFIG}/indirect.md"
-systemctl list-unit-files | awk '{print $1" "$2}' | grep 'enabled' | grep -v '.target' | grep -v 'enabled-runtime' | awk '{print $1}' 1> "${SYSCONFIG}/units.md"
+systemctl list-unit-files | grep "masked" | awk '{print $1}' 1> "${SYSCONFIG}/masked.md"
+systemctl list-unit-files | awk '{print $1" "$2}' | grep "enabled" | grep -vE ".target|enabled-runtime" | awk '{print $1}' 1> "${SYSCONFIG}/units.md"
+systemctl list-units | grep "@." | grep -vE "dead|exited" | awk '{print $1}' | grep -vE "getty|user|blockdev" | grep "@." 1> "${SYSCONFIG}/indirect.md"
 
 chown -R root:root "$SYSCONFIG"
-chmod -R 555 "$SYSCONFIG"
+chmod -R 0555 "$SYSCONFIG"
 
-find "$SYSCONFIG" -type f -exec chmod 444 {} \;
-find "$SYSCONFIG" -type d -exec chmod 555 {} \;
+find "$SYSCONFIG" -type f -exec chmod 0444 {} \;
+find "$SYSCONFIG" -type d -exec chmod 0555 {} \;
 
-chmod -R 555 "${SYSCONFIG}/bin"
-chmod -R 555 "${SYSCONFIG}/etc/profile.d"
-chmod -R 500 "${SYSCONFIG}/etc/syscheck.d"
+chmod -R 0555 "${SYSCONFIG}/bin"
+chmod -R 0555 "${SYSCONFIG}/etc/profile.d"
+chmod -R 0500 "${SYSCONFIG}/etc/syscheck.d"
 
-chmod 555 "${SYSCONFIG}/etc/ssh"
-chmod 500 "${SYSCONFIG}/etc/sysctl.d"
-chmod 500 "${SYSCONFIG}/etc/security"
-chmod 500 "${SYSCONFIG}/etc/iptables"
-chmod 500 "${SYSCONFIG}/etc/modprobe.d"
-chmod 500 "${SYSCONFIG}/etc/pacman.d/hooks"
-chmod 400 "${SYSCONFIG}/etc/mkinitcpio.conf"
-chmod 440 "${SYSCONFIG}/etc/ssh/sshd_config"
-chmod 500 "${SYSCONFIG}/etc/security/limits.d"
-chmod 400 "${SYSCONFIG}/etc/sysctl.d/kernel.conf"
-chmod 400 "${SYSCONFIG}/etc/systemd/coredump.conf"
-chmod 400 "${SYSCONFIG}/etc/iptables/iptables.rules"
-chmod 400 "${SYSCONFIG}/etc/iptables/ip6tables.rules"
-chmod 400 "${SYSCONFIG}/etc/security/limits.d/limits.conf"
+chmod 0555 "${SYSCONFIG}/etc/ssh"
+chmod 0500 "${SYSCONFIG}/etc/sysctl.d"
+chmod 0500 "${SYSCONFIG}/etc/security"
+chmod 0500 "${SYSCONFIG}/etc/iptables"
+chmod 0444 "${SYSCONFIG}/etc/resolv.conf"
+chmod 0500 "${SYSCONFIG}/etc/pacman.d/hooks"
+chmod 0400 "${SYSCONFIG}/etc/mkinitcpio.conf"
+chmod 0440 "${SYSCONFIG}/etc/ssh/sshd_config"
+chmod 0500 "${SYSCONFIG}/etc/security/limits.d"
+chmod 0400 "${SYSCONFIG}/etc/sysctl.d/kernel.conf"
+chmod 0400 "${SYSCONFIG}/etc/systemd/coredump.conf"
+chmod 0400 "${SYSCONFIG}/etc/iptables/iptables.rules"
+chmod 0400 "${SYSCONFIG}/etc/iptables/ip6tables.rules"
+chmod 0400 "${SYSCONFIG}/etc/security/limits.d/limits.conf"
 
-chmod 400 ${SYSCONFIG}/etc/modprobe.d/*
-chmod 400 ${SYSCONFIG}/etc/pacman.d/hooks/*
+chmod 0400 "${SYSCONFIG}"/etc/iptables/*
+chmod 0400 "${SYSCONFIG}"/etc/pacman.d/hooks/*
 
-chmod 400 /etc/iptables/*
-chmod 400 /etc/pacman.d/hooks/*
+chmod 0400 /etc/iptables/*
+chmod 0400 /etc/pacman.d/hooks/*
 
-chmod -R 555 "/etc/profile.d"
-chmod -R 500 "/etc/syscheck.d"
+chmod -R 0555 "/etc/profile.d"
+chmod -R 0500 "/etc/syscheck.d"
 
-chmod 555 "/etc/ssh"
-chmod 555 "/etc/systemd"
-chmod 500 "/etc/sysctl.d"
-chmod 500 "/etc/iptables"
-chmod 500 "/etc/security"
-chmod 500 "/etc/modprobe.d"
-chmod 500 "/etc/pacman.d/hooks"
-chmod 500 "/etc/security/limits.d"
+chmod 0555 "/etc/ssh"
+chmod 0555 "/etc/systemd"
+chmod 0500 "/etc/sysctl.d"
+chmod 0500 "/etc/iptables"
+chmod 0500 "/etc/security"
+chmod 0500 "/etc/pacman.d/hooks"
+chmod 0500 "/etc/security/limits.d"
 
-chmod 444 "/etc/motd"
-chmod 444 "/etc/hosts"
-chmod 550 "/etc/pacman.d"
-chmod 444 "/etc/hostname"
-chmod 444 "/etc/locale.gen"
-chmod 444 "/etc/resolv.conf"
-chmod 400 "/etc/pacman.conf"
-chmod 444 "/etc/nsswitch.conf"
-chmod 400 "/etc/vconsole.conf"
-chmod 444 "/etc/sysconfig.conf"
-chmod 444 "/etc/ssh/ssh_config"
-chmod 400 "/etc/mkinitcpio.conf"
+chmod 0444 "/etc/motd"
+chmod 0444 "/etc/hosts"
+chmod 0550 "/etc/pacman.d"
+chmod 0444 "/etc/hostname"
+chmod 0444 "/etc/locale.gen"
+chmod 0444 "/etc/resolv.conf"
+chmod 0400 "/etc/pacman.conf"
+chmod 0444 "/etc/nsswitch.conf"
+chmod 0400 "/etc/vconsole.conf"
+chmod 0444 "/etc/sysconfig.conf"
+chmod 0444 "/etc/ssh/ssh_config"
+chmod 0400 "/etc/mkinitcpio.conf"
 
 chown root:root -R "/etc/systemd"
 chown root:root -R "/etc/iptables"
@@ -87,7 +86,6 @@ chown root:root -R "/etc/pacman.d"
 chown root:root -R "/etc/security"
 chown root:root -R "/etc/sysctl.d"
 chown root:root -R "/etc/profile.d"
-chown root:root -R "/etc/modprobe.d"
 chown root:root -R "/etc/syscheck.d"
 
 chown root:root "/etc/motd"
@@ -101,21 +99,22 @@ chown root:root "/etc/nsswitch.conf"
 chown root:root "/etc/sysconfig.conf"
 chown root:root "/etc/mkinitcpio.conf"
 
-find "/etc/ssh" -type f -exec chmod 400 {} \;
-find "/etc/systemd" -type f -exec chmod 444 {} \;
-find "/etc/pacman.d" -type f -exec chmod 440 {} \;
-find "/etc/sysctl.d" -type f -exec chmod 440 {} \;
-find "/etc/security" -type f -exec chmod 440 {} \;
-find "/etc/modprobe.d" -type f -exec chmod 440 {} \;
-find "/etc/systemd/network" -type f -exec chmod 444 {} \;
+find "/etc/ssh" -type f -exec chmod 0400 {} \;
+find "/etc/systemd" -type f -exec chmod 0444 {} \;
+find "/etc/pacman.d" -type f -exec chmod 0440 {} \;
+find "/etc/sysctl.d" -type f -exec chmod 0440 {} \;
+find "/etc/security" -type f -exec chmod 0440 {} \;
+find "/etc/systemd/network" -type f -exec chmod 0444 {} \;
 
 if [ -d "/etc/syscheck.d" ]; then
-    for s in $(ls /etc/syscheck.d/*.sh); do
-        source "$s"
+    for entry in /etc/syscheck.d/*.sh; do
+        if [ -f "$entry" ]; then
+            source "$entry"
+        fi
     done
 fi
 
 echo "Broken Links Found:"
-find /etc -xtype l 2> /dev/null | grep -v "/proc" | grep -v "/tmp" | grep -v "/run"
+find /etc -xtype l -xdev 2> /dev/null | grep -vE "/proc|/tmp|/run"
 echo "Done!"
 exit 0

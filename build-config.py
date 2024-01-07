@@ -70,15 +70,15 @@ class Builder(object):
             y.close()
             del y
         if not isinstance(r, str) or len(r) == 0:
-            self.files[b] = f'/usr/bin/printf "" > "${{ROOT}}${{SYSCONFIG_DIR}}{b}"'
+            self.files[b] = f'/usr/bin/printf "" > "${{SETUP_DIRECTORY}}{b}"'
             return
         i = 0
         o = StringIO()
-        e = [f'/usr/bin/printf "" > "${{ROOT}}${{SYSCONFIG_DIR}}{b}"']
+        e = [f'/usr/bin/printf "" > "${{SETUP_DIRECTORY}}{b}"']
         for c in r:
             if i >= 80:
                 e.append(
-                    f"/usr/bin/printf '{o.getvalue()}' >> \"${{ROOT}}${{SYSCONFIG_DIR}}{b}\""
+                    f"/usr/bin/printf '{o.getvalue()}' >> \"${{SETUP_DIRECTORY}}{b}\""
                 )
                 o.truncate(0)
                 o.seek(0)
@@ -103,9 +103,7 @@ class Builder(object):
                 o.write(c)
             i += 1
         if o.tell() > 0:
-            e.append(
-                f"/usr/bin/printf '{o.getvalue()}' >> \"${{ROOT}}${{SYSCONFIG_DIR}}{b}\""
-            )
+            e.append(f"/usr/bin/printf '{o.getvalue()}' >> \"${{SETUP_DIRECTORY}}{b}\"")
         del o, k, r
         self.files[b] = "\n".join(e)
         del e, b
@@ -119,7 +117,7 @@ class Builder(object):
                 continue
             if k[0] != "/":
                 k = f"/{k}"
-            output.write(f'mkdir -p "${{ROOT}}${{SYSCONFIG_DIR}}{k}" 2> /dev/null\n')
+            output.write(f'mkdir -p "${{SETUP_DIRECTORY}}{k}" 2> /dev/null\n')
         output.write("\n")
         for k, v in self.files.items():
             output.write(f'# Create file "{k}"\n')
@@ -170,6 +168,5 @@ if __name__ == "__main__":
         b.print(file)
     except Exception as err:
         print(f"{err}", file=stderr)
-        raise err
         exit(1)
     exit(0)

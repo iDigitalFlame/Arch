@@ -269,7 +269,7 @@ setup_disk() {
     fi
     log "Mounting Partitions.."
     if [[ $SETUP_FS == "btrfs" ]]; then
-        if ! mount -t btrfs -o compress=zstd,space_cache=v2 "${drive}" "/mnt"; then
+        if ! mount -t btrfs -o noatime,compress=zstd,space_cache=v2 "${drive}" "/mnt"; then
             bail "mount returned a non-zero error code!"
         fi
         if ! btrfs subvolume create "/mnt/base" 1> /dev/null; then
@@ -280,7 +280,7 @@ setup_disk() {
             bail "umount returned a non-zero error code!"
         fi
         sync
-        if ! mount -t btrfs -o compress=zstd,subvol=/base,space_cache=v2 "${drive}" "/mnt"; then
+        if ! mount -t btrfs -o noatime,compress=zstd,subvol=/base,space_cache=v2 "${drive}" "/mnt"; then
             bail "mount returned a non-zero error code!"
         fi
     else

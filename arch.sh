@@ -964,7 +964,6 @@ setup_config() {
     chmod 0444 "${SETUP_DIRECTORY}"/etc/systemd/system/*
     rm -f /mnt/etc/ssh/*key* 2> /dev/null
     rm -f "/mnt/etc/localtime" 2> /dev/null
-    rm -f "/mnt/etc/resolv.conf" 2> /dev/null
     rm -f "/mnt/etc/iptables/empty.rules" 2> /dev/null
     rm -f "/mnt/etc/iptables/simple_firewall.rules" 2> /dev/null
     awk '$5 > 2000' "/mnt/etc/ssh/moduli" > "/mnt/etc/ssh/moduli"
@@ -1002,8 +1001,6 @@ setup_chroot() {
         printf "grub-mkconfig -o /boot/grub/grub.cfg\n" >> "/mnt/root/start.sh"
         printf "grub-set-default 1\n" >> "/mnt/root/start.sh"
     fi
-    printf "touch /run/systemd/resolve/resolv.conf &> /dev/null\n" >> "/mnt/root/start.sh"
-    printf "ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf\n" >> "/mnt/root/start.sh"
     printf 'ln -s /usr/lib/systemd/system/fstrim.timer /etc/systemd/system/timers.target.wants/fstrim.timer\n' >> "/mnt/root/start.sh"
     printf 'ln -s /etc/systemd/system/reflector.timer /etc/systemd/system/timers.target.wants/reflector.timer\n' >> "/mnt/root/start.sh"
     printf 'ln -s /usr/lib/systemd/system/sshd.service /etc/systemd/system/multi-user.target.wants/sshd.service\n' >> "/mnt/root/start.sh"
@@ -1062,6 +1059,8 @@ setup_chroot() {
         bail "arch-chroot returned a non-zero error code!"
     fi
     log "Chroot finished!"
+    rm -f "/mnt/etc/resolv.conf"
+    ln -s /run/systemd/resolve/resolv.conf /mnt/etc/resolv.conf
     if [ $SETUP_EFI -eq 1 ]; then
         log "Configuring EFI boot.."
         bdisk=""

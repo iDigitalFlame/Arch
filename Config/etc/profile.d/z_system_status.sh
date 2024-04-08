@@ -14,7 +14,7 @@ status_repo() {
     if ! [ -d "${SYSCONFIG}/.git" ]; then
         return 0
     fi
-    if bash -c "cd ${SYSCONFIG}; git status | grep -qiE 'modified|deleted|Untracked'"; then
+    if [ -n "$(sh -c "cd ${SYSCONFIG}; git status -s")" ]; then
         printf '# Config:\tSync needed, use "syspush"\n'
     else
         printf "# Config:\tUp-to-Date\n"
@@ -22,7 +22,7 @@ status_repo() {
 }
 status_storage() {
     echo "# Storage:"
-    df -h | grep -v "tmpfs" | grep -E '/dev/|/opt/|/mnt/' | sort -r | awk '{print ""$1" "$5" ("$3"/"$2")"}' | column -t | awk '{print "#     "$0}'
+    df -h | grep -v "tmpfs" | grep -E '/dev/|/opt/|/mnt/' | sort -r | awk '{print ""$1" "$5" ("$3"/"$2")"}' | sort | column -t | awk '{print "#     "$0}'
 }
 status_network() {
     echo "# Interface Addresses:"
@@ -31,6 +31,19 @@ status_network() {
     done
 }
 status_services() {
+    if [ -e "/usr/bin/pacman" ]; then
+        if [ -f "/var/run/updates.list" ]; then
+            updates="$(wc -l < "/var/run/updates.list") Pending"
+        else
+            if [ "$UID" = "0" ]; then
+                systemctl start checkupdates.service
+                updates="Checking for updates.."
+            else
+                updates="Updates check pending.."
+            fi
+        fi
+        printf "# Updates:\t%s\n" "${updates}"
+    fi
     printf "# Network:\t%s Established, " "$(netstat -panut 2> /dev/null | grep -c "ESTABLISHED")"
     printf "%s Listening\n" "$(netstat -panut 2> /dev/null | grep -c "LISTEN")"
     printf "# Services:\t%s Running, " "$(systemctl --state=active --no-legend --no-pager | grep ".service" | grep -c "running")"

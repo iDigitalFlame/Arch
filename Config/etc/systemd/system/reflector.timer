@@ -1,5 +1,5 @@
 [Unit]
-Description         = Pacman Mirrorlist Update Timer
+Description         = Pacman Mirrorlist Update
 
 [Timer]
 OnCalendar          = weekly

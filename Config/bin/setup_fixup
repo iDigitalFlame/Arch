@@ -1,0 +1,51 @@
+#!/usr/bin/bash
+
+if ! [ "$UID" = "0" ]; then
+    echo "Error: root is required!"
+    exit 1
+fi
+
+if [ $# -ne 1 ]; then
+    echo "setup_fixup <sysconfig dir>"
+    exit 2
+fi
+if [ ! -d "$1" ]; then
+    printf 'Error: path "%s" is not valid!\n' "$1"
+    exit 1
+fi
+
+fixup_packages() {
+    if [ $# -ne 1 ]; then
+        return
+    fi
+    if [ ! -f "$1" ]; then
+        return
+    fi
+    local _packages=()
+    while read i; do
+        if ! pacman -Qi "$i" 1> /dev/null 2> /dev/null; then
+            _packages+=($i)
+        fi
+    done < "$1"
+    if [ ${#_packages[@]} -gt 0 ]; then
+        printf "Installing %s packages..\n" "${#_packages[@]}"
+        printf "Package: %s\n" "${_packages[@]}"
+        pacman -Sy --noconfirm ${_packages[@]}
+    fi
+}
+fixup_systemctl() {
+    if [ $# -ne 2 ]; then
+        return
+    fi
+    if [ ! -f "$2" ]; then
+        return
+    fi
+    while read i; do
+        systemctl $1 $i 2> /dev/null
+    done < "$2"
+}
+
+fixup_packages "${1}/packages.md"
+fixup_systemctl mask "${1}/masked.md"
+fixup_systemctl enable "${1}/units.md"
+fixup_systemctl enable "${1}/indirect.md"

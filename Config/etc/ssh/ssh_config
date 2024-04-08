@@ -23,5 +23,5 @@ Host *
     PasswordAuthentication          no
     HostbasedAuthentication         no
     GSSAPIDelegateCredentials       no
-    KbdInteractiveAuthentication    no
+    KbdInteractiveAuthentication    yes
     ChallengeResponseAuthentication yes

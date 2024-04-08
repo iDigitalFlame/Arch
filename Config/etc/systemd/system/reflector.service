@@ -1,18 +1,19 @@
 [Unit]
 After                   = network-online.target systemd-resolved.service
 Requires                = network-online.target systemd-resolved.service
-Description             = Pacman Mirrorlist Update Service
+Description             = Pacman Mirrorlist Update
 
 [Service]
 Type                    = simple
-ExecStart               = /usr/bin/reflector --protocol https --latest 30 --number 20 --sort rate --country 'United States' --save /etc/pacman.d/mirrorlist
+ExecStart               = /usr/bin/reflector --protocol https --latest 30 --number 20 --sort rate --country 'United States' --save /var/cache/pacman/mirrorlist
 PrivateTmp              = true
+Environment             = XDG_CACHE_HOME=/var/cache/pacman
 KeyringMode             = private
 ProtectHome             = false
 ProtectClock            = true
 PrivateUsers            = true
 ProtectSystem           = strict
-ReadWritePaths          = /etc/pacman.d /root/.cache
+ReadWritePaths          = /var/cache/pacman
 PrivateDevices          = true
 NoNewPrivileges         = true
 LockPersonality         = true

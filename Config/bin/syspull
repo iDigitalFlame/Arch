@@ -2,24 +2,32 @@
 
 source "/etc/sysconfig.conf" 2> /dev/null
 if [ -z "$SYSCONFIG" ]; then
-    echo "Could not find the System Configuration directory!"
+    echo "Error: system configuration directory not found!"
     exit 1
 fi
 if ! [ -d "$SYSCONFIG" ]; then
-    printf "System Configuration directory \"%s\" does not exist!\n" "$SYSCONFIG"
+    printf 'Error: system configuration directory "%s" does not exist!\n' "$SYSCONFIG"
     exit 1
 fi
 
 SYSCONFIG=${SYSCONFIG%/}
 if ! [ -d "${SYSCONFIG}/.git" ]; then
-    printf "System Configuration directory \"%s\" is not a Git repository!\n" "$SYSCONFIG"
+    printf "Error: system cnfiguration directory \"%s\" is not a repository!\n" "$SYSCONFIG"
     exit 1
 fi
 
 if ! [ "$UID" = "0" ]; then
-    echo "Only root can do this!"
+    echo "Error: root is required!"
     exit 1
 fi
 
-sh -c "cd ${SYSCONFIG}; git pull"
+[ ${SYSCONFIG_SECURE:-0} -eq 1 ] && mount -o rw,remount /
+[ -e "/etc/profile.d/proxy.sh" ] && source "/etc/profile.d/proxy.sh" 2> /dev/null
+
+sh -c "cd ${SYSCONFIG}; git pull -q"
+
 syslink
+
+if [ ${SYSCONFIG_SECURE:-0} -eq 1 ]; then
+    mount -o ro,remount / 2> /dev/null || mount -Ro ro,remount /
+fi

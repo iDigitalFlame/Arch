@@ -17,9 +17,10 @@ IgnoreRhosts                    yes
 TCPKeepAlive                    yes
 AddressFamily                   any
 ListenAddress                   0.0.0.0
+ListenAddress                   ::
 KexAlgorithms                   curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
 LoginGraceTime                  1m
-PermitRootLogin                 yes
+PermitRootLogin                 yes # prohibit-password
 AllowTcpForwarding              no
 AuthorizedKeysFile              .ssh/authorized_keys
 ClientAliveCountMax             0
@@ -28,7 +29,8 @@ IgnoreUserKnownHosts            no
 PermitEmptyPasswords            no
 AllowAgentForwarding            no
 PubkeyAuthentication            yes
-PasswordAuthentication          no
+AuthenticationMethods           publickey,password # publickey
+PasswordAuthentication          yes # no
 KerberosAuthentication          no
 HostbasedAuthentication         no
 KbdInteractiveAuthentication    no

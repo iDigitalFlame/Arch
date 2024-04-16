@@ -52,7 +52,7 @@ _RESULT=""
 
 ask() {
     if [ $SETUP_AUTO -eq 1 ]; then
-        bail "cannot ask when SETUP_AUTO=1"
+        bail 'Cannot ask when \x1b[1mSETUP_AUTO=1\x1b[0m'
     fi
     printf "[?] %s? " "$1"
     read -r check
@@ -96,8 +96,8 @@ yes() {
 }
 bail() {
     local _m="$1"; shift
-    printf "\x1b[1m[!]\x1b[0m \033[1;31mAn error occured:\033[0m ${_m}!\n" $*
-    printf "\x1b[1m[!]\x1b[0m \033[1;31mCannot continue, quitting!\033[0m\n"
+    printf "\x1b[1m[!]\x1b[0m \x1b[31m${_m}!\x1b[0m\n" $* 1>&2
+    printf '\x1b[1m[!]\x1b[0m \x1b[31mCannot continue, quitting!\x1b[0m\n' 1>&2
     cleanup 1
     exit 1
 }
@@ -106,7 +106,7 @@ cleanup() {
     umount "${SETUP_ROOT}/boot" "${SETUP_ROOT}/var" "${SETUP_ROOT}" 2> /dev/null
     sync
     if [ $# -eq 0 ]; then
-        printf "\n\x1b[1m[!]\x1b[0m \033[1;31mInterrupted!\033[0m\n"
+        printf '\n\x1b[1m[!]\x1b[0m \x1b[31mInterrupted!\x1b[0m\n' 1>&2
         exit
     fi
 }
@@ -160,7 +160,7 @@ fs_format() {
         ;;
     esac
     if [ $? -ne 0 ]; then
-        bail 'mkfs.%s returned a non-zero error code' "$2"
+        bail '\x1b[0m\x1b[1mmkfs.%s\x1b[0m\x1b[31m returned a non-zero error code' "$2"
     fi
     sleep 1
     local _uuid="$(ls -l /dev/disk/by-uuid/ | grep "$(basename "$3")" | awk '{print $9}')"
@@ -171,7 +171,7 @@ fs_format() {
         fi
     fi
     if [ -z "$_uuid" ]; then
-        bail 'cannot find the UUID for "%s"' "$3"
+        bail 'Cannot find the UUID for \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[31m' "$3"
     fi
     _FS_UUIDS["$1"]="$_uuid"
     if [ -z "${4:""}" ]; then
@@ -180,22 +180,22 @@ fs_format() {
     mkdir -p "$4" 2> /dev/null
     if [ "$2" = "btrfs" ]; then
         if ! mount -t btrfs -o noatime,compress=zstd:3,space_cache=v2 "$3" "$4"; then
-            bail 'mount on "%s" returned a non-zero error code' "$4"
+            bail 'mount on \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[31m returned a non-zero error code' "$4"
         fi
         if ! btrfs subvolume create "${4}/base" 1> /dev/null; then
-            bail "btrfs subvolume create returned a non-zero error code"
+            bail "\x1b[0m\x1b[1mbtrfs subvolume create\x1b[0m\x1b[31m returned a non-zero error code"
         fi
         if ! umount "$4"; then
-            bail "umount returned a non-zero error code"
+            bail "\x1b[0m\x1b[1mumount\x1b[0m\x1b[32m returned a non-zero error code"
         fi
         if ! mount -t btrfs -o noatime,compress=zstd:3,space_cache=v2,subvol=/base "$3" "$4"; then
-            bail 'mount on "%s" returned a non-zero error code' "$4"
+            bail 'mount on \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[31m returned a non-zero error code' "$4"
         fi
     else
         if ! mount -o rw,noatime "$3" "$4"; then
-            bail 'mount on "%s" returned a non-zero error code' "$4"
+            bail 'mount on \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[31m returned a non-zero error code' "$4"
         fi
-        log 'Mounted "%s" on "%s"!' "$3" "$4"
+        log 'Mounted \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[32m on \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[32m!' "$3" "$4"
     fi
     return 0
 }
@@ -310,11 +310,11 @@ setup_init() {
         done
     fi
     if [ -z "$SETUP_DRIVE" ]; then
-        bail "No drive selected"
+        bail "No drive found"
     fi
 }
 setup_disk() {
-    log 'Creating partitions on "%s"..' "$SETUP_DRIVE"
+    log 'Creating partitions on \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[32m..' "$SETUP_DRIVE"
     umount "${SETUP_DRIVE}"* 2> /dev/null
     local _lvm=$(lvdisplay | grep "LV Path" | awk '{print $3}')
     if [ -n "$_lvm" ]; then
@@ -334,7 +334,7 @@ setup_disk() {
         sync
         partprobe 1> /dev/null 2> /dev/null
     fi
-    log 'Wiping on "%s"..' "$SETUP_DRIVE"
+    log 'Wiping \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[32m..' "$SETUP_DRIVE"
     printf "g\nw\n" | fdisk --wipe always "$SETUP_DRIVE"
     partprobe 1> /dev/null 2> /dev/null
     local _var=6 # Default to 6GB for /var
@@ -356,46 +356,46 @@ setup_disk() {
         _fstr="${_fstr}n\n\n\n\n\nw"
     fi
     if ! printf "$_fstr" | fdisk "$SETUP_DRIVE"; then
-        bail "fdisk returned a non-zero error code"
+        bail "\x1b[0m\x1b[1mfdisk\x1b[0m\x1b[32m returned a non-zero error code"
     fi
     partprobe 1> /dev/null 2> /dev/null
-    log 'Formatting boot partition "%s"..' "${_devs[0]}"
+    log 'Formatting boot partition \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[32m..' "${_devs[0]}"
     if ! mkfs.fat -n BOOT -F32 -i "$(echo "${_FS_UUIDS["boot"]}" | sed -e 's/-//g')" "${_devs[0]}" 1> /dev/null; then
-        bail "mkfs.fat returned a non-zero error code"
+        bail "\x1b[0m\x1b[1mmkfs.vfat\x1b[0m\x1b[32m returned a non-zero error code"
     fi
     if [ $_FS_TYPE -ge 2 ]; then
-        log 'Creating LVM partitions on "%s"..' "${_devs[1]}"
+        log 'Creating LVM partitions on \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[32m..' "${_devs[1]}"
         if ! pvcreate --force --yes "${_devs[1]}" 1> /dev/null; then
-            bail "pvcreate returned a non-zero error code"
+            bail "\x1b[0m\x1b[1mpvcreate\x1b[0m\x1b[32m returned a non-zero error code"
         fi
         if ! vgcreate --force --yes storage "${_devs[1]}" 1> /dev/null; then
-            bail "vgcreate returned a non-zero error code"
+            bail "\x1b[0m\x1b[1mvgcreate\x1b[0m\x1b[32m returned a non-zero error code"
         fi
         if [ $_FS_TYPE -eq 3 ]; then
             if ! lvcreate --yes -n cache storage -L "${_var}G" 1> /dev/null; then
-                bail "lvcreate returned a non-zero error code"
+                bail "\x1b[0m\x1b[1lvgcreate\x1b[0m\x1b[32m returned a non-zero error code"
             fi
             _devs[2]="/dev/mapper/storage-cache"
         fi
         if ! lvcreate --yes -n root storage -l 100%FREE 1> /dev/null; then
-            bail "lvcreate returned a non-zero error code"
+                bail "\x1b[0m\x1b[1lvgcreate\x1b[0m\x1b[32m returned a non-zero error code"
         fi
         _devs[1]="/dev/mapper/storage-root"
     fi
     if [ $_FS_TYPE -eq 1 ] || [ $_FS_TYPE -eq 3 ]; then
-        log 'Formatting root partition "%s"..' "${_devs[2]}"
+        log 'Formatting root partition \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[32m..' "${_devs[2]}"
         fs_format "root" "${SETUP_FS["root"]}" "${_devs[2]}" "$SETUP_ROOT"
-        log 'Formatting cache partition "%s"..' "${_devs[1]}"
+        log 'Formatting cache partition \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[32m..' "${_devs[1]}"
         fs_format "cache" "${SETUP_FS["var"]}" "${_devs[1]}" "${SETUP_ROOT}/var"
     else
-        log 'Formatting root partition "%s"..' "${_devs[1]}"
+        log 'Formatting root partition \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[32m..' "${_devs[1]}"
         fs_format "root" "${SETUP_FS["root"]}" "${_devs[1]}" "$SETUP_ROOT"
     fi
     mkdir -p "${SETUP_ROOT}/boot"
     if ! mount "${_devs[0]}" "${SETUP_ROOT}/boot"; then
-        bail "mount returned a non-zero error code"
+        bail "\x1b[0m\x1b[1mmount\x1b[0m\x1b[32m returned a non-zero error code"
     fi
-    log 'Mounted "%s" to "%s".' "${_devs[0]}" "${SETUP_ROOT}/boot"
+    log 'Mounted \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[32m to \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[32m.' "${_devs[0]}" "${SETUP_ROOT}/boot"
 }
 setup_config() {
     log "Starting configuration.."
@@ -413,7 +413,7 @@ setup_config() {
         local _gateway=$(echo "$i" | awk -F, '{print $4}')
         local _dns1=$(echo "$i" | awk -F, '{print $5}')
         local _dns2=$(echo "$i" | awk -F, '{print $6}')
-        log 'Configuring interface "%s"..' "$_name"
+        log 'Configuring interface \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[32m..' "$_name"
         if [ -n "$_alias" ]; then
             local _mac=$(ip link show "${_name}" | grep 'ether' | awk '{print $2}')
             printf 'SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="%s", NAME="%s"\n' "$_mac" "$_alias" >> "${SETUP_DIRECTORY}/etc/udev/rules.d/10-network.rules"
@@ -531,7 +531,7 @@ setup_config() {
         printf "SYSCONFIG_SECURE=1\n" >> "${SETUP_ROOT}/etc/sysconfig.conf"
     fi
 
-    rm "${SETUP_ROOT}/etc/localtime"
+    rm "${SETUP_ROOT}/etc/localtime" 2> /dev/null
     ln -sT "/usr/share/zoneinfo/America/New_York" "${SETUP_ROOT}/etc/localtime"
 
     if setup_custom; then
@@ -675,9 +675,7 @@ setup_config() {
     chmod 0400 "${SETUP_DIRECTORY}"/etc/pacman.d/hooks/*
     chmod 0444 "${SETUP_DIRECTORY}"/etc/systemd/system/*
 
-    rm -f "${SETUP_ROOT}/etc/localtime" 2> /dev/null
     rm -f "${SETUP_ROOT}"/etc/ssh/*key* 2> /dev/null
-
     awk '$5 > 2000' "${SETUP_ROOT}/etc/ssh/moduli" > "${SETUP_ROOT}/etc/ssh/moduli"
     ssh-keygen -t rsa -b 4096 -f "${SETUP_ROOT}/etc/ssh/ssh_host_rsa_key" -N "" < /dev/null > /dev/null
     ssh-keygen -t ed25519 -f "${SETUP_ROOT}/etc/ssh/ssh_host_ed25519_key" -N "" < /dev/null > /dev/null
@@ -692,17 +690,17 @@ setup_chroot() {
     printf '#!/bin/bash\n\n' > "${SETUP_ROOT}/root/start.sh"
     printf 'ln -s /tmplvm /run/lvm\n' >> "${SETUP_ROOT}/root/start.sh"
     printf 'vgscan -v 2> /dev/null\n' >> "${SETUP_ROOT}/root/start.sh"
-    printf "bash %s/bin/relink %s /\n" "$SETUP_CONFIGURATION" "$SETUP_CONFIGURATION" >> "${SETUP_ROOT}/root/start.sh"
-    printf "bash %s/bin/syslink\n" "$SETUP_CONFIGURATION" >> "${SETUP_ROOT}/root/start.sh"
+    printf "bash %s/bin/relink %s / 1> /dev/null\n" "$SETUP_CONFIGURATION" "$SETUP_CONFIGURATION" >> "${SETUP_ROOT}/root/start.sh"
+    printf "bash %s/bin/syslink 1> /dev/null\n" "$SETUP_CONFIGURATION" >> "${SETUP_ROOT}/root/start.sh"
     printf 'mount -o rw,remount /\n' >> "${SETUP_ROOT}/root/start.sh"
-    printf 'locale-gen\n' >> "${SETUP_ROOT}/root/start.sh"
+    printf 'locale-gen 1> /dev/null\n' >> "${SETUP_ROOT}/root/start.sh"
     printf 'mkinitcpio -p linux-hardened\n' >> "${SETUP_ROOT}/root/start.sh"
-    printf 'printf "archlinux\\narchlinux" | passwd root\n' >> "${SETUP_ROOT}/root/start.sh"
+    printf 'printf "archlinux\\narchlinux" | passwd root 1> /dev/null\n' >> "${SETUP_ROOT}/root/start.sh"
     if [ $_FS_EFI -eq 1 ]; then
-        printf "bootctl install\n" >> "${SETUP_ROOT}/root/start.sh"
+        printf "bootctl install 1> /dev/null\n" >> "${SETUP_ROOT}/root/start.sh"
     else
-        printf "grub-install %s\n" "$SETUP_DRIVE" >> "${SETUP_ROOT}/root/start.sh"
-        printf "grub-mkconfig -o /boot/grub/grub.cfg\n" >> "${SETUP_ROOT}/root/start.sh"
+        printf "grub-install %s 1> /dev/null\n" "$SETUP_DRIVE" >> "${SETUP_ROOT}/root/start.sh"
+        printf "grub-mkconfig -o /boot/grub/grub.cfg 1> /dev/null\n" >> "${SETUP_ROOT}/root/start.sh"
     fi
     printf 'timedatectl set-ntp true 2> /dev/null\n' >> "${SETUP_ROOT}/root/start.sh"
     printf 'pacman -Rsc $(pacman -Qtdq) --noconfirm 2> /dev/null\n' >> "${SETUP_ROOT}/root/start.sh"
@@ -710,16 +708,16 @@ setup_chroot() {
     printf 'env XDG_CACHE_HOME=/var/cache/pacman reflector --protocol https --latest 30 --number 20 --sort rate --save "/var/cache/pacman/mirrorlist"\n' >> "${SETUP_ROOT}/root/start.sh"
     printf 'update-ca-trust\n' >> "${SETUP_ROOT}/root/start.sh"
     printf 'usermod -c "Server %s" root\n' "$SETUP_HOSTNAME" >> "${SETUP_ROOT}/root/start.sh"
-    printf 'git config --global user.name "Server %s"\n' "$SETUP_HOSTNAME" >> "${SETUP_ROOT}/root/start.sh"
-    printf 'git config --global user.email "%s@localhost"\n' "$SETUP_HOSTNAME" >> "${SETUP_ROOT}/root/start.sh"
-    printf 'git lfs install\n' >> "${SETUP_ROOT}/root/start.sh"
+    printf 'git config --global user.name "Server %s" 1> /dev/null\n' "$SETUP_HOSTNAME" >> "${SETUP_ROOT}/root/start.sh"
+    printf 'git config --global user.email "%s@localhost" 1> /dev/null\n' "$SETUP_HOSTNAME" >> "${SETUP_ROOT}/root/start.sh"
+    printf 'git lfs install 1> /dev/null\n' >> "${SETUP_ROOT}/root/start.sh"
     printf 'exit\n' >> "${SETUP_ROOT}/root/start.sh"
     chmod 0555 "${SETUP_ROOT}/root/start.sh"
     mount -o rw,remount "${SETUP_ROOT}"
     mount -o rw,remount "${SETUP_ROOT}/boot"
     log "Build complete, starting chroot.."
     if ! arch-chroot "${SETUP_ROOT}" "/root/start.sh"; then
-        bail "arch-chroot returned a non-zero error code"
+        bail "\x1b[0m\x1b[1march-chroot\x1b[0m\x1b[31m returned a non-zero error code"
     fi
     log "Chroot complete!"
     mount -o rw,remount "${SETUP_ROOT}"
@@ -1428,7 +1426,7 @@ setup_packages() {
     fi
     log "Installing Packages to root.."
     if ! pacstrap "${SETUP_ROOT}" ${_pkgs[@]}; then
-        bail "pacstrap returned a non-zero error code"
+        bail "\x1b[0m\x1b[1mpacstrap\x1b[0m\x1b[31m returned a non-zero error code"
     fi
     log "Package install complete!"
 }
@@ -1453,10 +1451,10 @@ log "Install complete!"
 trap - 1 2 3 6
 
 if [ $SETUP_REBOOT -eq 1 ]; then
-    log "Hit CTRL+C to stop reboot and unmount of disks!"
-    log "Rebooting in 5 seconds.."
+    log "Hit \x1b[0m\x1b[1mCTRL+C\x1b[0m\x1b[32m to stop reboot and unmount of disks!"
+    log "Rebooting in \x1b[0m\x1b[1m5\x1b[0m\x1b[32m seconds.."
     sleep 3
-    log "Rebooting in 2 seconds.."
+    log "Rebooting in \x1b[0m\x1b[1m2\x1b[0m\x1b[32m seconds.."
     sleep 2
     log "Unmounting and rebooting!"
     cleanup 1

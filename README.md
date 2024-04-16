@@ -13,4 +13,5 @@ Use `wget <https://dij.sh/arch>; bash arch` to install.
 The default credentials are `root:archlinux` *(These work over SSH if you enable PasswordAuth)*
 **ITS HIGHLY RECOMMENDED YOU CHANGE THESE**
 
-The "vps.sh" script is a copy of the "VPS2Arch" script written by [@drizzt](https://github.com/drizzt)
+Another way to convert a VPS to Archlinux is use [vps2arch](https://github.com/drizzt/vps2arch)
+by [@drizzt](https://github.com/drizzt)

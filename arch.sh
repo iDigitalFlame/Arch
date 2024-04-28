@@ -756,7 +756,7 @@ setup_custom() {
 }
 setup_defaults() {
     # Automatically generated build files script.
-    # Args: build-config.py Config
+    # Args: build-config.py ./Config
 
     mkdir -p "${SETUP_DIRECTORY}/bin" 2> /dev/null
     mkdir -p "${SETUP_DIRECTORY}/etc" 2> /dev/null
@@ -1241,14 +1241,14 @@ setup_defaults() {
 
     # Create file "/etc/sysctl.d/kernel.conf"
     /usr/bin/printf "" > "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
-    /usr/bin/printf 'fs.file-max                     = 372925\nvm.swappiness                   = 10\n' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
-    /usr/bin/printf 'fs.suid_dumpable                = 0\nfs.protected_fifos              = 1\nfs.pro' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
-    /usr/bin/printf 'tected_regular            = 1\nkernel.kptr_restrict            = 2\nkernel.dmesg' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
-    /usr/bin/printf '_restrict           = 1\nfs.protected_symlinks           = 1\nfs.protected_hardl' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
-    /usr/bin/printf 'inks          = 1\nkernel.yama.ptrace_scope        = 3\nkernel.kexec_load_disabl' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
-    /usr/bin/printf 'ed      = 1\nfs.inotify.max_user_watches     = 16777215\nfs.inotify.max_queued_e' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
-    /usr/bin/printf 'vents    = 32767\nvm.dirty_writeback_centisecs    = 1500\nfs.inotify.max_user_in' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
-    /usr/bin/printf 'stances   = 4096\n' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
+    /usr/bin/printf 'fs.file-max                     = 372925\nkernel.sysrq                    = 16\n' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
+    /usr/bin/printf 'vm.swappiness                   = 10\nfs.suid_dumpable                = 0\nfs.pr' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
+    /usr/bin/printf 'otected_fifos              = 1\nfs.protected_regular            = 1\nkernel.kptr' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
+    /usr/bin/printf '_restrict            = 2\nkernel.dmesg_restrict           = 1\nfs.protected_syml' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
+    /usr/bin/printf 'inks           = 1\nfs.protected_hardlinks          = 1\nkernel.yama.ptrace_scop' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
+    /usr/bin/printf 'e        = 3\nkernel.kexec_load_disabled      = 1\nfs.inotify.max_user_watches  ' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
+    /usr/bin/printf '   = 16777215\nfs.inotify.max_queued_events    = 32767\nvm.dirty_writeback_centi' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
+    /usr/bin/printf 'secs    = 1500\nfs.inotify.max_user_instances   = 4096\n' >> "${SETUP_DIRECTORY}/etc/sysctl.d/kernel.conf"
 
     # Create file "/etc/sysctl.d/network.conf"
     /usr/bin/printf "" > "${SETUP_DIRECTORY}/etc/sysctl.d/network.conf"

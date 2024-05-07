@@ -31,19 +31,6 @@ status_network() {
     done
 }
 status_services() {
-    if [ -e "/usr/bin/pacman" ]; then
-        if [ -f "/var/run/updates.list" ]; then
-            updates="$(wc -l < "/var/run/updates.list") Pending"
-        else
-            if [ "$UID" = "0" ]; then
-                systemctl start checkupdates.service
-                updates="Checking for updates.."
-            else
-                updates="Updates check pending.."
-            fi
-        fi
-        printf "# Updates:\t%s\n" "${updates}"
-    fi
     printf "# Network:\t%s Established, " "$(netstat -panut 2> /dev/null | grep -c "ESTABLISHED")"
     printf "%s Listening\n" "$(netstat -panut 2> /dev/null | grep -c "LISTEN")"
     printf "# Services:\t%s Running, " "$(systemctl --state=active --no-legend --no-pager | grep ".service" | grep -c "running")"

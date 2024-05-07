@@ -1198,7 +1198,7 @@ setup_defaults() {
     /usr/bin/printf 'uthorizedKeysFile              .ssh/authorized_keys\nClientAliveCountMax        ' >> "${SETUP_DIRECTORY}/etc/ssh/sshd_config"
     /usr/bin/printf '     0\nClientAliveInterval             600\nIgnoreUserKnownHosts            no\n' >> "${SETUP_DIRECTORY}/etc/ssh/sshd_config"
     /usr/bin/printf 'PermitEmptyPasswords            no\nAllowAgentForwarding            no\nPubkeyAu' >> "${SETUP_DIRECTORY}/etc/ssh/sshd_config"
-    /usr/bin/printf 'thentication            yes\nAuthenticationMethods           publickey,password ' >> "${SETUP_DIRECTORY}/etc/ssh/sshd_config"
+    /usr/bin/printf 'thentication            yes\nAuthenticationMethods           publickey password ' >> "${SETUP_DIRECTORY}/etc/ssh/sshd_config"
     /usr/bin/printf '# publickey\nPasswordAuthentication          yes # no\nKerberosAuthentication   ' >> "${SETUP_DIRECTORY}/etc/ssh/sshd_config"
     /usr/bin/printf '       no\nHostbasedAuthentication         no\nKbdInteractiveAuthentication    n' >> "${SETUP_DIRECTORY}/etc/ssh/sshd_config"
     /usr/bin/printf 'o\nChallengeResponseAuthentication no\n' >> "${SETUP_DIRECTORY}/etc/ssh/sshd_config"

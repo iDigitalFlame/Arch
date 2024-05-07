@@ -29,7 +29,7 @@ IgnoreUserKnownHosts            no
 PermitEmptyPasswords            no
 AllowAgentForwarding            no
 PubkeyAuthentication            yes
-AuthenticationMethods           publickey,password # publickey
+AuthenticationMethods           publickey password # publickey
 PasswordAuthentication          yes # no
 KerberosAuthentication          no
 HostbasedAuthentication         no

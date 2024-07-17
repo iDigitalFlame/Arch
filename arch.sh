@@ -174,7 +174,7 @@ fs_format() {
         bail 'Cannot find the UUID for \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[31m' "$3"
     fi
     _FS_UUIDS["$1"]="$_uuid"
-    if [ -z "${4:""}" ]; then
+    if [ -z "$4" ]; then
         return 0
     fi
     mkdir -p "$4" 2> /dev/null
@@ -191,6 +191,7 @@ fs_format() {
         if ! mount -t btrfs -o noatime,compress=zstd:3,space_cache=v2,subvol=/base "$3" "$4"; then
             bail 'mount on \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[31m returned a non-zero error code' "$4"
         fi
+        log 'Mounted \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[32m on \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[32m!' "$3" "$4"
     else
         if ! mount -o rw,noatime "$3" "$4"; then
             bail 'mount on \x1b[0m\x1b[1m"%s"\x1b[0m\x1b[31m returned a non-zero error code' "$4"

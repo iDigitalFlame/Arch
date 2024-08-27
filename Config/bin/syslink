@@ -121,6 +121,7 @@ if [ -d "/etc/syscheck.d" ]; then
     done
 fi
 
+sync
 echo "Broken Links Found:"
 find /etc -xtype l -xdev 2> /dev/null | grep -vE "/proc|/tmp|/run"
 echo "Done!"

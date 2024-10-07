@@ -56,10 +56,12 @@ chmod 0555 "/etc/systemd"
 chmod 0500 "/etc/sysctl.d"
 chmod 0555 "/etc/security"
 chmod 0444 "/etc/resolv.conf"
+chmod 0500 "/etc/mkinitcpio.d" 2> /dev/null
 chmod 0500 "/etc/pacman.d/hooks" 2> /dev/null
 chmod 0500 "/etc/security/limits.d" 2> /dev/null
 
 chmod 0400 /etc/sysctl.d/*
+chmod 0400 /etc/mkinitcpio.d/* 2> /dev/null
 chmod 0444 /etc/systemd/network/* 2> /dev/null
 chmod 0400 /etc/security/limits.d/* 2> /dev/null
 

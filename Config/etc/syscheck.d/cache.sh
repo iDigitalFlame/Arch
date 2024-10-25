@@ -10,8 +10,8 @@ linkcheck "/etc/pacman.d/mirrorlist" "/var/cache/pacman/mirrorlist"
 chmod 0644 "/var/cache/ld.so.cache"
 chown root:root "/var/cache/ld.so.cache"
 
-chmod -R 0750 "/var/cache/pacman/pkg"
-find "/var/cache/pacman/pkg" -type f -exec chmod 0640 {} \;
+chmod -R 0770 "/var/cache/pacman/pkg"
+find "/var/cache/pacman/pkg" -type f -exec chmod 0660 {} \;
 chown -R root:alpm "/var/cache/pacman/pkg"
 
 chmod 0755 "/var/lib/pacman/sync"

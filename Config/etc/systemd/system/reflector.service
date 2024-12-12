@@ -10,6 +10,7 @@ PrivateTmp              = true
 Environment             = XDG_CACHE_HOME=/var/cache/pacman
 KeyringMode             = private
 ProtectHome             = false
+PrivatePIDs             = true
 ProtectClock            = true
 PrivateUsers            = true
 ProtectSystem           = strict

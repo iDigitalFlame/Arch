@@ -90,6 +90,7 @@ if [ -e "${SYSCONFIG}/etc/udev" ]; then
     chown -R root:root "/etc/udev"
     chmod -R 0555 "${SYSCONFIG}/etc/udev"
     find "/etc/udev/" -xdev -type f -exec chmod 0444 {} \;
+    find "${SYSCONFIG}/etc/udev/" -xdev -type f -exec chmod 0444 {} \;
 fi
 if [ -e "${SYSCONFIG}/etc/tmpfiles.d" ]; then
     chown -R root:root "/etc/tmpfiles.d"

@@ -6,3 +6,5 @@ export HISTFILE="/dev/null"
 
 export LESSKEY="/etc/sysless"
 export LESSHISTFILE="/dev/null"
+
+export PYTHONPYCACHEPREFIX="/var/cache/python"

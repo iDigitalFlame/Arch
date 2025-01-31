@@ -7,7 +7,7 @@ Description             = Pacman Mirrorlist Update
 Type                    = simple
 ExecStart               = /usr/bin/reflector --protocol https --latest 30 --number 20 --sort rate --country 'United States' --save /var/cache/pacman/mirrorlist
 PrivateTmp              = true
-Environment             = XDG_CACHE_HOME=/var/cache/pacman
+Environment             = XDG_CACHE_HOME="/var/cache/pacman"
 KeyringMode             = private
 ProtectHome             = false
 PrivatePIDs             = true

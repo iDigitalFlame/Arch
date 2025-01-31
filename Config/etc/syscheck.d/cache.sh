@@ -24,3 +24,6 @@ find "/var/lib/pacman" -type f -exec chmod 0644 {} \;
 
 chmod 0700 "/var/cache/ldconfig"
 chown -R root:root "/var/cache/ldconfig"
+
+chmod 3777 "/var/cache/python"
+chown root:root "/var/cache/python"

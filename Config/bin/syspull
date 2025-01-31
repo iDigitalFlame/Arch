@@ -12,7 +12,7 @@ fi
 
 SYSCONFIG=${SYSCONFIG%/}
 if ! [ -d "${SYSCONFIG}/.git" ]; then
-    printf "Error: system cnfiguration directory \"%s\" is not a repository!\n" "$SYSCONFIG"
+    printf "Error: system configuration directory \"%s\" is not a repository!\n" "$SYSCONFIG"
     exit 1
 fi
 

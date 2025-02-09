@@ -529,7 +529,7 @@ setup_config() {
 
     printf "%s\n" "$SETUP_HOSTNAME" > "${SETUP_DIRECTORY}/etc/motd"
     printf "%s" "$SETUP_HOSTNAME" > "${SETUP_DIRECTORY}/etc/hostname"
-    printf "127.0.0.1    localhost\n172.0.0.1    %s\n" "$SETUP_HOSTNAME" >> "${SETUP_DIRECTORY}/etc/hosts"
+    printf "127.0.0.1    localhost\n127.0.0.1    %s\n" "$SETUP_HOSTNAME" >> "${SETUP_DIRECTORY}/etc/hosts"
 
     printf 'SYSCONFIG="%s"\n' "$SETUP_CONFIGURATION" > "${SETUP_ROOT}/etc/sysconfig.conf"
     if [ "$_rw_type" = "ro" ]; then

@@ -616,6 +616,8 @@ setup_config() {
     ln -sT "/dev/null" "${SETUP_ROOT}/etc/systemd/system/systemd-pstore.service"
     ln -sT "/dev/null" "${SETUP_ROOT}/etc/systemd/system/systemd-repart.service"
     ln -sT "/dev/null" "${SETUP_ROOT}/etc/systemd/system/display-manager.service"
+    ln -sT "/dev/null" "${SETUP_ROOT}/etc/systemd/system/systemd-machined.socket"
+    ln -sT "/dev/null" "${SETUP_ROOT}/etc/systemd/system/systemd-machined.service"
     ln -sT "/dev/null" "${SETUP_ROOT}/etc/systemd/system/systemd-sysusers.service"
     ln -sT "/dev/null" "${SETUP_ROOT}/etc/systemd/system/systemd-firstboot.service"
     ln -sT "/dev/null" "${SETUP_ROOT}/etc/systemd/system/first-boot-complete.target"

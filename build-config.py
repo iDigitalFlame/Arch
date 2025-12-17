@@ -17,7 +17,7 @@
 from os import listdir
 from io import StringIO
 from sys import argv, exit, stderr, stdout
-from os.path import isfile, isdir, islink, join, abspath, dirname
+from os.path import join, isdir, isfile, islink, abspath, dirname
 
 
 class Builder(object):

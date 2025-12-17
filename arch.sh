@@ -766,7 +766,7 @@ setup_custom() {
 }
 setup_defaults() {
     # Automatically generated build files script.
-    # Args: build-config.py Config
+    # Args: build-config.py ./Config
 
     mkdir -p "${SETUP_DIRECTORY}/bin" 2> /dev/null
     mkdir -p "${SETUP_DIRECTORY}/etc" 2> /dev/null
@@ -1075,15 +1075,18 @@ setup_defaults() {
 
     # Create file "/etc/pacman.d/hooks/00-boot.hook"
     /usr/bin/printf "" > "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
-    /usr/bin/printf '[Trigger]\nType        = Path\nTarget      = usr/lib/modules/*/vmlinuz\nTarget  ' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
-    /usr/bin/printf '    = usr/lib/initcpio/*\nTarget      = usr/lib/firmware/*\nTarget      = usr/sr' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
-    /usr/bin/printf 'c/*/dkms.conf\nOperation   = Remove\nOperation   = Install\nOperation   = Upgrad' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
-    /usr/bin/printf 'e\n\n[Trigger]\nType        = Package\nTarget      = linux\nTarget      = linux-' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
-    /usr/bin/printf '*\nTarget      = systemd\nTarget      = intel-ucode\nTarget      = amd-ucode\nTa' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
-    /usr/bin/printf 'rget      = mkinitcpio\nTarget      = mkinitcpio-git\nTarget      = mkinitcpio-b' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
-    /usr/bin/printf 'usybox\nOperation   = Remove\nOperation   = Install\nOperation   = Upgrade\n\n[A' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
-    /usr/bin/printf 'ction]\nWhen        = PreTransaction\nExec        = /usr/bin/mount -o remount,rw' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
-    /usr/bin/printf ' /boot\nDescription = Mounting /boot as read/write..\n' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
+    /usr/bin/printf '[Trigger]\nType        = Path\nTarget      = usr/bin/lvm\nTarget      = usr/lib/' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
+    /usr/bin/printf 'initcpio/*\nTarget      = usr/lib/firmware/*\nTarget      = usr/bin/cryptsetup\n' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
+    /usr/bin/printf 'Target      = usr/src/*/dkms.conf\nTarget      = usr/lib/systemd/systemd\nTarget' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
+    /usr/bin/printf '      = usr/lib/modules/*/extramodules/\nOperation   = Remove\nOperation   = Ins' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
+    /usr/bin/printf 'tall\nOperation   = Upgrade\n\n[Trigger]\nType        = Path\nTarget      = usr/' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
+    /usr/bin/printf 'lib/modules/*/vmlinuz\nOperation   = Install\nOperation   = Upgrade\n\n[Trigger]' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
+    /usr/bin/printf '\nType        = Package\nTarget      = linux\nTarget      = linux-*\nTarget     ' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
+    /usr/bin/printf ' = systemd\nTarget      = intel-ucode\nTarget      = amd-ucode\nTarget      = mk' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
+    /usr/bin/printf 'initcpio\nTarget      = mkinitcpio-git\nTarget      = mkinitcpio-busybox\nOperat' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
+    /usr/bin/printf 'ion   = Remove\nOperation   = Install\nOperation   = Upgrade\n\n[Action]\nWhen  ' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
+    /usr/bin/printf '      = PreTransaction\nExec        = /usr/bin/mount -o remount,rw /boot\nDescri' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
+    /usr/bin/printf 'ption = Mounting /boot as read/write..\n' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/00-boot.hook"
 
     # Create file "/etc/pacman.d/hooks/y0-mirrors.hook"
     /usr/bin/printf "" > "${SETUP_DIRECTORY}/etc/pacman.d/hooks/y0-mirrors.hook"
@@ -1125,15 +1128,18 @@ setup_defaults() {
 
     # Create file "/etc/pacman.d/hooks/zz-boot.hook"
     /usr/bin/printf "" > "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
-    /usr/bin/printf '[Trigger]\nType        = Path\nTarget      = usr/lib/modules/*/vmlinuz\nTarget  ' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
-    /usr/bin/printf '    = usr/lib/initcpio/*\nTarget      = usr/lib/firmware/*\nTarget      = usr/sr' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
-    /usr/bin/printf 'c/*/dkms.conf\nOperation   = Remove\nOperation   = Install\nOperation   = Upgrad' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
-    /usr/bin/printf 'e\n\n[Trigger]\nType        = Package\nTarget      = linux\nTarget      = linux-' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
-    /usr/bin/printf '*\nTarget      = systemd\nTarget      = intel-ucode\nTarget      = amd-ucode\nTa' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
-    /usr/bin/printf 'rget      = mkinitcpio\nTarget      = mkinitcpio-git\nTarget      = mkinitcpio-b' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
-    /usr/bin/printf 'usybox\nOperation   = Remove\nOperation   = Install\nOperation   = Upgrade\n\n[A' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
-    /usr/bin/printf 'ction]\nWhen        = PostTransaction\nExec        = /usr/bin/mount -ro remount,' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
-    /usr/bin/printf 'ro /boot\nDescription = Mounting /boot as read only..\n' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
+    /usr/bin/printf '[Trigger]\nType        = Path\nTarget      = usr/bin/lvm\nTarget      = usr/lib/' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
+    /usr/bin/printf 'initcpio/*\nTarget      = usr/lib/firmware/*\nTarget      = usr/bin/cryptsetup\n' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
+    /usr/bin/printf 'Target      = usr/src/*/dkms.conf\nTarget      = usr/lib/systemd/systemd\nTarget' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
+    /usr/bin/printf '      = usr/lib/modules/*/extramodules/\nOperation   = Remove\nOperation   = Ins' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
+    /usr/bin/printf 'tall\nOperation   = Upgrade\n\n[Trigger]\nType        = Path\nTarget      = usr/' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
+    /usr/bin/printf 'lib/modules/*/vmlinuz\nOperation   = Install\nOperation   = Upgrade\n\n[Trigger]' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
+    /usr/bin/printf '\nType        = Package\nTarget      = linux\nTarget      = linux-*\nTarget     ' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
+    /usr/bin/printf ' = systemd\nTarget      = intel-ucode\nTarget      = amd-ucode\nTarget      = mk' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
+    /usr/bin/printf 'initcpio\nTarget      = mkinitcpio-git\nTarget      = mkinitcpio-busybox\nOperat' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
+    /usr/bin/printf 'ion   = Remove\nOperation   = Install\nOperation   = Upgrade\n\n[Action]\nWhen  ' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
+    /usr/bin/printf '      = PostTransaction\nExec        = /usr/bin/mount -ro remount,ro /boot\nDesc' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
+    /usr/bin/printf 'ription = Mounting /boot as read only..\n' >> "${SETUP_DIRECTORY}/etc/pacman.d/hooks/zz-boot.hook"
 
     # Create file "/etc/profile.d/alias.sh"
     /usr/bin/printf "" > "${SETUP_DIRECTORY}/etc/profile.d/alias.sh"
